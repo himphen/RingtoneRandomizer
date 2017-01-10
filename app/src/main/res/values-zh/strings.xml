@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_category_more">更多資訊</string>
+    <string name="pref_category_general">一般</string>
+    <string name="version">版本</string>
+    <string name="version_des">2.0</string>
+    <string name="about_navbtn">確定</string>
+    <string name="more_app">開發人員其他程式</string>
+    <string name="report">回報問題及意見</string>
+    <string name="report_des">如果你對本程式有任何問題及意見，請向開發人員提出，我們會盡快回應你的看法。</string>
+    <string name="report_title">隨機鈴聲工具 V2 回報問題及意見</string>
+    <string name="report_subject">我的問題及意見是: \n</string>
+    <string name="qanda">常見問題</string>
+    <string name="qanda_message">Q. 我的鈴聲沒有改變，是什麼一回事？\n\n
+        A. 如果你發現沒有隨機轉換鈴聲，請先參閱以下方法。\n\n
+        1. 在設定中啟用鈴聲變更通知，如果是程式問題，你將會在下次來電時出現錯誤提示，請回報給開發人員。\n
+        \n
+        2. 請勿在開啟USB大量儲存裝置模式同時開啟本程式，否則可能會令在清單的鈴聲消失。\n
+        \n
+        3. 請不要停止本程式的服務，請將本程式排除於Task Killer名單。\n
+        \n
+        4. 請避免將此程式安裝至SD卡。\n
+        \n
+        5. 啊哈，可能是個別Android設備問題，開發人員盡力確保各型號的相容性，請給我們一些時間解決。\n
+</string>
+    <!--  -->
+    <string name="app_name">隨機鈴聲工具</string>
+    <string name="add_button">加入鈴聲</string>
+    <string name="title_activity_choose">請選擇鈴聲加入至列表</string>
+    <string name="addto_button">加入</string>
+    <string name="filter_button">篩選鈴聲</string>
+    <string name="done">加入成功</string>
+    <string name="changed_ringtone">成功變更鈴聲</string>
+    <string name="changed_ringtone_one">你只有一個已選鈴聲，請在程式內選擇更多鈴聲。</string>
+    <string name="setting">設定</string>
+    <string name="filter_title">請使用音樂的資料夾路徑進行篩選</string>
+    <string name="clear_title">注意</string>
+    <string name="clear_message">你是否確定要清除清單？</string>
+    <string name="clear_navbtn">不清除</string>
+    <string name="clear_posbtn">確定</string>
+    <string name="clear_done">清除成功</string>
+    <!--  -->
+    <string name="update_title">你好</string>
+    <string name="update_message">歡迎使用全新介面的隨機鈴聲工具 V2. 
+        \n\n如果你是前版本的使用者，我們改進程式碼及修正了一些錯誤，很抱歉你要重新加入鈴聲。</string>
+    <string name="update_navbtn">明白了</string>
+    <!--  -->
+    <string name="item_title">鈴聲資料</string>
+    <string name="item_message">鈴聲名稱：</string>
+    <string name="item_message2">鈴聲路徑：</string>
+    <string name="item_navbtn">取消</string>
+    <string name="playing_sound">音樂檔案播放中</string>
+    <string name="playing_sound_fail">錯誤：無法播放音樂檔案</string>
+    <string name="item_netbtn">從清單中移除</string>
+    <string name="item_posbtn">變更為此鈴聲</string>
+    <string name="item_done">變更成功</string>
+    <string name="ringtone_main">電話鈴聲</string>
+    <string name="notyet">你還沒有加入任何鈴聲至清單中……</string>
+    <string name="share_message">用來用去都是同一個鈴聲？快下載「隨機鈴聲工具」，每次來電都會自動替換鈴聲，令你的手機更智能化。/n/n
+        https://play.google.com/store/apps/details?id=hibernate.v2.ringtonerandomizer</string>
+    <string name="share_button">分享此APP給…</string>
+    <string name="share">分享此APP</string>
+    <string name="rate_title">給開發人員一些回饋</string>
+    <string name="rate_message">希望你能繼續支持開發人員更新及開發更多程式。\n\n如對本程式感到滿意，請給我們一些評價及分享此程式給親朋好友。</string>
+    <string name="rate_navbtn">不用了</string>
+    <string name="rate_netbtn">以後再提醒</string>
+    <string name="rate_posbtn">立即評價</string>
+    <string name="wait">載入中</string>
+    <string name="press_to_stop">按多一下可立即停止播放</string>
+
+</resources>

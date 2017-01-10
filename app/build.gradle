@@ -1,0 +1,80 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25"
+
+    defaultConfig {
+        applicationId "hibernate.v2.ringtonerandomizer"
+        minSdkVersion 16
+        targetSdkVersion 21
+        versionCode 23
+        versionName "2.1.1"
+        multiDexEnabled true
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "String", "ADMOB_KEY", "\"" + getSecretKey("ADMOB_KEY") + "\""
+            buildConfigField "String", "DEVICE_ID", "\"" + getSecretKey("DEVICE_ID") + "\""
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            buildConfigField "String", "ADMOB_KEY", "\"" + getSecretKey("ADMOB_KEY") + "\""
+            buildConfigField "String", "DEVICE_ID", "\"" + getSecretKey("DEVICE_ID") + "\""
+        }
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+}
+
+def getSecretKey(name) {
+    def Properties props = new Properties()
+    def File f = new File('./../Key/ringtonerandomizer.secrets.properties');
+    if (f.exists()) {
+        props.load(new FileInputStream(f))
+        return props[name]
+    } else {
+        return name;
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://jitpack.io"
+    }
+
+}
+
+// RxBinding Butter Knife
+apply plugin: 'com.neenbedankt.android-apt'
+
+dependencies {
+    // Google Android Support
+    compile 'com.android.support:multidex:1.0.1'
+    compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.android.support:support-v4:25.1.0'
+    compile 'com.android.support:design:25.1.0'
+    compile 'com.android.support:recyclerview-v7:25.1.0'
+    compile 'com.android.support:preference-v14:25.1.0'
+
+    // Google Play Services
+    compile 'com.google.android.gms:play-services-ads:10.0.1'
+    compile 'com.google.android.gms:play-services-analytics:10.0.1'
+
+    // Roboto TextView
+    compile 'com.github.johnkil.android-robototextview:robototextview:2.5.0'
+
+    // RxBinding Butter Knife
+    compile 'com.jakewharton:butterknife:8.0.1'
+    apt 'com.jakewharton:butterknife-compiler:8.0.1'
+
+    // Material Dialog
+    compile('com.github.afollestad.material-dialogs:core:0.8.5.8@aar') {
+        transitive = true
+    }
+}
