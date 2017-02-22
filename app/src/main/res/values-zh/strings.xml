@@ -40,6 +40,7 @@
     <string name="changed_ringtone">成功變更鈴聲</string>
     <string name="changed_ringtone_one">你只有一個已選鈴聲，請在程式內選擇更多鈴聲。</string>
     <string name="setting">設定</string>
+    <string name="action_iap">移除廣告</string>
     <string name="filter_title">請使用音樂的資料夾路徑進行篩選</string>
     <string name="clear_title">注意</string>
     <string name="clear_message">你是否確定要清除清單？</string>

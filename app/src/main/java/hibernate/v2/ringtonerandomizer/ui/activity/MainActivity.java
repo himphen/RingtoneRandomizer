@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.anjlab.android.iab.v3.BillingProcessor;
@@ -102,7 +103,6 @@ public class MainActivity extends BaseActivity {
 		fragmentManager.beginTransaction()
 				.replace(R.id.container, fragment)
 				.commit();
-
 	}
 
 	@Override
@@ -114,6 +114,9 @@ public class MainActivity extends BaseActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+			case R.id.action_iap:
+				checkPayment();
+				break;
 			case R.id.action_settings:
 				Intent intent = new Intent().setClass(mContext,
 						SettingsActivity.class);
@@ -164,6 +167,15 @@ public class MainActivity extends BaseActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (!billingProcessor.handleActivityResult(requestCode, resultCode, data)) {
 			super.onActivityResult(requestCode, resultCode, data);
+		}
+	}
+
+	public void checkPayment() {
+		boolean isAvailable = BillingProcessor.isIabServiceAvailable(mContext);
+		if (isAvailable) {
+			billingProcessor.purchase(mContext, C.IAP_PID);
+		} else {
+			Toast.makeText(mContext, R.string.ui_error, Toast.LENGTH_LONG).show();
 		}
 	}
 

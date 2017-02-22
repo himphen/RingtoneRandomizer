@@ -37,6 +37,7 @@
     <string name="changed_ringtone">Ringtone was changed successfully.</string>
     <string name="changed_ringtone_one">You have only one selected ringtone. Add more ringtones to make it randomize.</string>
     <string name="setting">Setting</string>
+    <string name="action_iap">Ad Remove</string>
     <!--  -->
     <string name="filter_title">Filter using the File Path</string>
     <string name="clear_title">Caution</string>
