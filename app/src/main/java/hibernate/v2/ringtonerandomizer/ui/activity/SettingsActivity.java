@@ -27,7 +27,7 @@ public class SettingsActivity extends BaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_container_no_drawer_adview);
+		setContentView(R.layout.activity_container);
 		ButterKnife.bind(this);
 		setSupportActionBar(toolbar);
 

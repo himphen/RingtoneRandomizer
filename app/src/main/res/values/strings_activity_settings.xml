@@ -3,10 +3,6 @@
 
     <string name="title_activity_settings">Settings</string>
 
-    <!-- Strings related to Settings -->
-
-
-    <!-- Example General settings -->
     <string name="pref_header_general">General</string>
     <string name="pref_title_changed_notification">Notification</string>
     <string name="pref_des_changed_notificationOn">Show the popup message while incoming call</string>
@@ -15,16 +11,14 @@
     <string name="pref_title_enable">Enable</string>
     <string name="pref_des_enableOn">Change the ringtone while incoming call.</string>
     <string name="pref_des_enableOff">Ringtone will not be changed while incoming call.</string>
-    <string name="pref_language_sum">Restart this app after changing the language.</string>
-
     <string name="pref_language">Language</string>
-
-    <string-array name="pref_language_list_titles">
-        <item>System defualt</item>
+    <string name="pref_language_sum">Restart this app after changing the language.</string>
+    <string-array name="pref_language_list_titles" translatable="false">
+        <item>System default</item>
         <item>Chinese Traditional\n中文(繁體)</item>
         <item>English</item>
     </string-array>
-    <string-array name="pref_language_list_values">
+    <string-array name="pref_language_list_values" translatable="false">
         <item>auto</item>
         <item>zh</item>
         <item>en</item>

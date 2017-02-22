@@ -57,12 +57,10 @@ public class RingtoneSelectedAdapter extends RecyclerView.Adapter<RecyclerView.V
 			}
 		});
 	}
-	
+
 	@Override
 	public int getItemCount() {
-		if (mDataList == null)
-			return 0;
-		return mDataList.size();
+		return mDataList == null ? 0 : mDataList.size();
 	}
 
 	public static class ItemViewHolder extends RecyclerView.ViewHolder {

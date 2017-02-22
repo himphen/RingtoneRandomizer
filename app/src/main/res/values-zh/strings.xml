@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="ui_okay">確定</string>
+    <string name="ui_cancel">取消</string>
+    <string name="ui_share">分享</string>
+    <string name="ui_error">錯誤</string>
+    <string name="ui_na">無法剖析</string>
+
     <string name="pref_category_more">更多資訊</string>
     <string name="pref_category_general">一般</string>
     <string name="version">版本</string>
@@ -55,7 +61,7 @@
     <string name="item_netbtn">從清單中移除</string>
     <string name="item_posbtn">變更為此鈴聲</string>
     <string name="item_done">變更成功</string>
-    <string name="ringtone_main">電話鈴聲</string>
+    <string name="ringtone_main">已選電話鈴聲</string>
     <string name="notyet">你還沒有加入任何鈴聲至清單中……</string>
     <string name="share_message">用來用去都是同一個鈴聲？快下載「隨機鈴聲工具」，每次來電都會自動替換鈴聲，令你的手機更智能化。/n/n
         https://play.google.com/store/apps/details?id=hibernate.v2.ringtonerandomizer</string>
@@ -68,5 +74,8 @@
     <string name="rate_posbtn">立即評價</string>
     <string name="wait">載入中</string>
     <string name="press_to_stop">按多一下可立即停止播放</string>
+    <string name="iab_complete_message">請重新啟動程式以套用更新。</string>
+    <string name="iab_complete_title">感謝</string>
+    <string name="current">現在鈴聲</string>
 
 </resources>

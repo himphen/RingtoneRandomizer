@@ -6,10 +6,12 @@ public class Ringtone {
 	private String path;
 	private String position;
 
+	@Deprecated
 	public String getMusicId() {
 		return musicId;
 	}
 
+	@Deprecated
 	public void setMusicId(String string) {
 		this.musicId = string;
 	}

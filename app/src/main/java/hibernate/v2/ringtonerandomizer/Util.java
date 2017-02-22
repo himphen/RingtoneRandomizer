@@ -38,6 +38,8 @@ public class Util {
 	public static final String PREF_IAP = "iap";
 	public static final String PREF_LANGUAGE = "PREF_LANGUAGE";
 
+	public static final String IAP_PID = "donation";
+
 	@Nullable
 	public static AdView initAdView(Activity c, RelativeLayout adLayout) {
 		AdView adView = null;

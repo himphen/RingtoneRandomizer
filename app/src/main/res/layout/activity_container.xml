@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><!-- http://stackoverflow.com/questions/30533444/appbarlayout-with-framelayout-container-as-scrolling-content-doesnt-work -->
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent">
+<?xml version="1.0" encoding="utf-8"?>
+<!-- http://stackoverflow.com/questions/30533444/appbarlayout-with-framelayout-container-as-scrolling-content-doesnt-work -->
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -32,7 +34,8 @@
                 android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"/>
+                android:layout_weight="1">
+            </FrameLayout>
         </LinearLayout>
     </RelativeLayout>
 

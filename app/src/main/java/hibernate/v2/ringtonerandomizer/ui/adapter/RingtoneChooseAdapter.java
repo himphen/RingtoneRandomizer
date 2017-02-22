@@ -76,12 +76,10 @@ public class RingtoneChooseAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 			}
 		});
 	}
-	
+
 	@Override
 	public int getItemCount() {
-		if (mDataList == null)
-			return 0;
-		return mDataList.size();
+		return mDataList == null ? 0 : mDataList.size();
 	}
 
 	public HashMap<String, Ringtone> getSelectedRingtoneMap() {

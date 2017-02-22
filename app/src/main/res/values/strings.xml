@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="ui_okay">Okay</string>
+    <string name="ui_cancel">Cancel</string>
+    <string name="ui_error">Error</string>
+    <string name="ui_na">N/A</string>
+    <string name="ui_caution">Caution</string>
+
     <string name="pref_category_more">App Information</string>
     <string name="pref_category_general">General</string>
     <string name="version">Version</string>
@@ -23,7 +29,7 @@
 </string>
     <!--  -->
     <string name="app_name">Ringtone Randomizer</string>
-    <string name="title_activity_choose">Add ringtone</string>
+    <string name="title_activity_choose">Add ringtones</string>
     <string name="addto_button">Add</string>
     <string name="filter_button">Filter</string>
     <string name="done">Done.</string>
@@ -53,19 +59,22 @@
         \n\nIf you come form previous version, we are sorry that you need to re-add the list since we change a whole app including fixing bugs.</string>
     <string name="update_navbtn">Okay</string>
     <!--  -->
-    <string name="ringtone_main">Ringtone List</string>
+    <string name="ringtone_main">Selected Ringtones</string>
     <string name="notyet">You have not yet added any ringtone into the list.</string>
     <string name="share_message">Download "Ringtone Randomizer" to ring up your phone with different ringtones. That\'s sound smart!!/n/n
         https://play.google.com/store/apps/details?id=hibernate.v2.ringtonerandomizer</string>
     <string name="share_button">Share App to…</string>
     <string name="share">Share App</string>
-    <string name="rate_title">Give developers some feedbacks</string>
-    <string name="rate_message">Rate this app in Google Play to support developers. Conctact developers if you have any questions.</string>
+    <string name="rate_title">Give developers some feedback</string>
+    <string name="rate_message">Rate this app in Google Play to support developers. Contact developers if you have any questions.</string>
     <string name="rate_navbtn">No, thanks</string>
     <string name="rate_netbtn">Later on</string>
     <string name="rate_posbtn">RATE NOW</string>
     <string name="more_app">All developers\' App</string>
     <string name="wait">Loading…</string>
     <string name="press_to_stop">Press the item to stop music play.</string>
+    <string name="iab_complete_message">Please restart the app to apply the change.</string>
+    <string name="iab_complete_title">Thanks</string>
+    <string name="current">Current Ringtone</string>
 
 </resources>

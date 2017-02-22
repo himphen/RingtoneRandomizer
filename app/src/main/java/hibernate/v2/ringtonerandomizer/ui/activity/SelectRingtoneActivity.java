@@ -38,7 +38,7 @@ public class SelectRingtoneActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_container_no_drawer_adview);
+		setContentView(R.layout.activity_container_adview);
 		ButterKnife.bind(this);
 		setSupportActionBar(toolbar);
 

@@ -126,11 +126,10 @@ public class MainFragment extends BaseFragment {
 		dbhelper.close();
 	}
 
-
 	private void random() {
 		Toast.makeText(mContext,
 				DBHelper.changeRingtone(db, mContext, null),
-				Toast.LENGTH_LONG).show();
+				Toast.LENGTH_SHORT).show();
 		getCurrent();
 	}
 

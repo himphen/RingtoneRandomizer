@@ -1,8 +1,10 @@
 package hibernate.v2.ringtonerandomizer.ui.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -12,10 +14,13 @@ import android.view.MenuItem;
 import android.widget.RelativeLayout;
 
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.anjlab.android.iab.v3.BillingProcessor;
+import com.anjlab.android.iab.v3.TransactionDetails;
 import com.google.android.gms.ads.AdView;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import hibernate.v2.ringtonerandomizer.BuildConfig;
 import hibernate.v2.ringtonerandomizer.C;
 import hibernate.v2.ringtonerandomizer.R;
 import hibernate.v2.ringtonerandomizer.ui.fragment.MainFragment;
@@ -29,6 +34,8 @@ public class MainActivity extends BaseActivity {
 
 	@BindView(R.id.adLayout)
 	RelativeLayout adLayout;
+	private BillingProcessor billingProcessor;
+	private SharedPreferences settingDefault;
 
 
 	@Override
@@ -45,7 +52,10 @@ public class MainActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		setContentView(R.layout.activity_container_no_drawer_adview);
+		setContentView(R.layout.activity_container_adview);
+		settingDefault = PreferenceManager
+				.getDefaultSharedPreferences(mContext);
+
 		ButterKnife.bind(this);
 		setSupportActionBar(toolbar);
 
@@ -54,6 +64,36 @@ public class MainActivity extends BaseActivity {
 		ab.setHomeButtonEnabled(false);
 
 		C.forceShowMenu(mContext);
+
+		billingProcessor = new BillingProcessor(mContext, BuildConfig.GOOGLE_IAP_KEY,
+				new BillingProcessor.IBillingHandler() {
+					@Override
+					public void onProductPurchased(String productId, TransactionDetails details) {
+						if (productId.equals(C.IAP_PID)) {
+							settingDefault.edit().putBoolean(C.PREF_IAP, true).apply();
+							MaterialDialog.Builder dialog = new MaterialDialog.Builder(mContext)
+									.title(R.string.iab_complete_title)
+									.customView(R.layout.dialog_donate, true)
+									.positiveText(R.string.ui_okay);
+							dialog.show();
+						}
+					}
+
+					@Override
+					public void onPurchaseHistoryRestored() {
+						if (billingProcessor.isPurchased(C.IAP_PID)) {
+							settingDefault.edit().putBoolean(C.PREF_IAP, true).apply();
+						}
+					}
+
+					@Override
+					public void onBillingError(int errorCode, Throwable error) {
+					}
+
+					@Override
+					public void onBillingInitialized() {
+					}
+				});
 
 		adView = C.initAdView(mContext, adLayout);
 
@@ -113,7 +153,18 @@ public class MainActivity extends BaseActivity {
 			adView.removeAllViews();
 			adView.destroy();
 		}
+
+		if (billingProcessor != null)
+			billingProcessor.release();
+
 		super.onDestroy();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (!billingProcessor.handleActivityResult(requestCode, resultCode, data)) {
+			super.onActivityResult(requestCode, resultCode, data);
+		}
 	}
 
 }

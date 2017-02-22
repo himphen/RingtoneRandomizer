@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
     android:paddingBottom="4dp"
     android:paddingRight="8dp">
@@ -15,21 +17,23 @@
         android:layout_weight="1"
         android:orientation="vertical">
 
-        <TextView
+        <com.devspark.robototextview.widget.RobotoTextView
             android:id="@+id/filenameTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="filename"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            app:fontFamily="roboto"/>
 
-        <TextView
+        <com.devspark.robototextview.widget.RobotoTextView
             android:id="@+id/filepathTv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="3"
             android:paddingTop="2dp"
             android:text="filepath"
-            android:textColor="#999"/>
+            android:textColor="#999"
+            app:fontFamily="roboto"/>
     </LinearLayout>
 
     <LinearLayout

@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="AppTheme2" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-    </style>
-
     <style name="AppTheme" parent="Theme.AppCompat.Light">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -17,13 +13,8 @@
         <item name="colorControlHighlight">@color/primary</item>
         <item name="colorSwitchThumbNormal">@color/primary</item>
         <item name="windowActionModeOverlay">true</item>
-
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
-
-    </style>
-
-    <style name="NavigationTheme" parent="AppTheme2">
-        <item name="android:textSize">18sp</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
 
     <style name="DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
@@ -82,5 +73,33 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+
+
+    <style name="MainButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="colorButtonNormal">@color/primary</item>
+        <item name="colorControlHighlight">@color/grey800</item>
+    </style>
+
+    <style name="GreenButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:gravity">center</item>
+        <item name="colorAccent">@color/green</item>
+        <item name="colorButtonNormal">@color/green</item>
+        <item name="colorControlHighlight">@color/grey800</item>
+    </style>
+
+    <style name="GrayButton" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:gravity">center</item>
+        <item name="colorAccent">@color/grey400</item>
+        <item name="colorButtonNormal">@color/grey600</item>
+        <item name="colorControlHighlight">@color/grey800</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="TransparentButton" parent="Widget.AppCompat.Button.Borderless.Colored">
+        <item name="android:gravity">center</item>
+    </style>
 
 </resources>
