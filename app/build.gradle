@@ -8,8 +8,8 @@ android {
         applicationId "hibernate.v2.ringtonerandomizer"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 24
-        versionName "2.2"
+        versionCode 162200
+        versionName "2.2.0"
         multiDexEnabled true
     }
 
@@ -21,7 +21,7 @@ android {
         }
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "String", "ADMOB_KEY", "\"" + getSecretKey("ADMOB_KEY") + "\""
             buildConfigField "String", "DEVICE_ID", "\"" + getSecretKey("DEVICE_ID") + "\""
             buildConfigField "String", "GOOGLE_IAP_KEY", "\"" + getSecretKey("GOOGLE_IAP_KEY") + "\""

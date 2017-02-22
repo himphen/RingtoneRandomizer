@@ -76,5 +76,6 @@
     <string name="iab_complete_message">Please restart the app to apply the change.</string>
     <string name="iab_complete_title">Thanks</string>
     <string name="current">Current Ringtone</string>
+    <string name="ui_share">Share</string>
 
 </resources>
