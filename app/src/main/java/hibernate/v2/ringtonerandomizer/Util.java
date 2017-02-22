@@ -15,6 +15,7 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.ViewConfiguration;
 import android.widget.RelativeLayout;
 

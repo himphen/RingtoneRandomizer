@@ -8,6 +8,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.view.menu.ActionMenuItem;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -108,13 +109,19 @@ public class MainActivity extends BaseActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
+
+		if (!PreferenceManager.getDefaultSharedPreferences(mContext).getBoolean(C.PREF_IAP, false)) {
+			MenuItem adsItem = menu.add(0, 1334, 0, R.string.action_iap);
+			adsItem.setShowAsAction(ActionMenuItem.SHOW_AS_ACTION_ALWAYS);
+			adsItem.setIcon(R.drawable.ic_local_play_white_24dp);
+		}
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.action_iap:
+			case 1334:
 				checkPayment();
 				break;
 			case R.id.action_settings:
