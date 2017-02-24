@@ -180,7 +180,6 @@ public class DBHelper extends SQLiteOpenHelper {
 				Ringtone bean = new Ringtone();
 				bean.setName(cursor.getString(0));
 				bean.setPath(cursor.getString(1));
-				bean.setPosition(cursor.getString(2));
 				cursor.close();
 				return bean;
 			}
