@@ -29,15 +29,15 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 		mContext = context;
 		SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(context);
 		if (setting.getBoolean("pref_enable", true)) {
-			openDatabase();
 			String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
-			if (state.equals(TelephonyManager.EXTRA_STATE_RINGING)) {
+			if (TelephonyManager.EXTRA_STATE_RINGING.equals(state)) {
+				openDatabase();
 				String message = DBHelper.changeRingtone(db, context, null);
 				if (setting.getBoolean("pref_changed_notification", false)) {
 					showNotification(message);
 				}
+				closeDatabase();
 			}
-			closeDatabase();
 		}
 	}
 

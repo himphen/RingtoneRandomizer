@@ -78,7 +78,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/content_new"
+            android:src="@drawable/ic_add_box_black_24dp"
             android:theme="@style/TransparentButton"/>
 
         <ImageView
@@ -86,7 +86,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/list_refresh"
+            android:src="@drawable/ic_refresh_black_24dp"
             android:theme="@style/TransparentButton"/>
 
         <ImageView
@@ -94,7 +94,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@drawable/content_discard"
+            android:src="@drawable/ic_delete_black_24dp"
             android:theme="@style/TransparentButton"/>
     </LinearLayout>
 </LinearLayout>

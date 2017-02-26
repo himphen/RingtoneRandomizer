@@ -37,7 +37,7 @@ public class RingtoneSelectedAdapter extends RecyclerView.Adapter<RecyclerView.V
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		Context context = parent.getContext();
 
-		View itemView = LayoutInflater.from(context).inflate(R.layout.ringtone_list_item, parent, false);
+		View itemView = LayoutInflater.from(context).inflate(R.layout.list_item_selected, parent, false);
 		return new ItemViewHolder(itemView);
 	}
 

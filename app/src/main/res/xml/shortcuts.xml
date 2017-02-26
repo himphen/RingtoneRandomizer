@@ -1,0 +1,38 @@
+<shortcuts
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_refresh_black_24dp"
+        android:shortcutDisabledMessage="@string/shortcut_action_change"
+        android:shortcutId="shortcut_action_change"
+        android:shortcutLongLabel="@string/shortcut_action_change"
+        android:shortcutShortLabel="@string/shortcut_action_change"
+        tools:targetApi="n_mr1">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="hibernate.v2.ringtonerandomizer.ui.activity.MainActivity"
+            android:targetPackage="hibernate.v2.ringtonerandomizer">
+            <extra
+                android:name="shortcut_action_change"
+                android:value="true"/>
+        </intent>
+        <categories android:name="android.shortcut.conversation"/>
+    </shortcut>
+    <shortcut
+        android:enabled="true"
+        android:icon="@drawable/ic_add_box_black_24dp"
+        android:shortcutDisabledMessage="@string/shortcut_action_add"
+        android:shortcutId="shortcut_action_add"
+        android:shortcutLongLabel="@string/shortcut_action_add"
+        android:shortcutShortLabel="@string/shortcut_action_add"
+        tools:targetApi="n_mr1">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="hibernate.v2.ringtonerandomizer.ui.activity.SelectRingtoneActivity"
+            android:targetPackage="hibernate.v2.ringtonerandomizer">
+        </intent>
+        <categories android:name="android.shortcut.conversation"/>
+    </shortcut>
+</shortcuts>
+

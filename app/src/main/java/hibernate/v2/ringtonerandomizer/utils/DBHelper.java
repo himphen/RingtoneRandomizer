@@ -37,13 +37,11 @@ public class DBHelper extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		final String INIT_TABLE = "CREATE TABLE " + DB_TABLE_RINGTONE + " ("
 				+ _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + C.DB_COL_NAME
-				+ " text, " + C.DB_COL_PATH + " text, " + C.DB_COL_POSITION
-				+ " text);";
+				+ " text, " + C.DB_COL_PATH + " text);";
 		db.execSQL(INIT_TABLE);
 		final String INIT_TABLE2 = "CREATE TABLE " + C.DB_TABLE_NOTI + " ("
 				+ _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + C.DB_COL_NAME
-				+ " text, " + C.DB_COL_PATH + " text, " + C.DB_COL_POSITION
-				+ " text);";
+				+ " text, " + C.DB_COL_PATH + " text);";
 		db.execSQL(INIT_TABLE2);
 	}
 
@@ -203,36 +201,36 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	public static String changeRingtone(SQLiteDatabase db, Context context, String path) {
 		int count = getDBSongCount(db, context);
-		if (count == 0) {
-			return context.getString(R.string.notyet);
-		} else if (count == 1) {
-			return context.getString(R.string.changed_ringtone_one);
-		} else {
-			String name = null;
-			if (path == null) {
-				Ringtone bean = getDBRandomSong(db, context);
-				if (bean != null) {
-					path = bean.getPath();
-					name = bean.getName();
+		switch (count) {
+			case 0:
+				return context.getString(R.string.notyet);
+			case 1:
+				return context.getString(R.string.changed_ringtone_one);
+			default:
+				String name = null;
+				if (path == null) {
+					Ringtone bean = getDBRandomSong(db, context);
+					if (bean != null) {
+						path = bean.getPath();
+						name = bean.getName();
+					}
+				} else {
+					Ringtone bean = getDBSong(db, path);
+					if (bean != null) {
+						name = bean.getName();
+					}
 				}
-			} else {
-				Ringtone bean = getDBSong(db, path);
-				if (bean != null) {
-					name = bean.getName();
+
+				if (path != null && name != null) {
+					try {
+						Uri pickedUri = C.getUriByPath(path);
+
+						RingtoneManager.setActualDefaultRingtoneUri(context,
+								RingtoneManager.TYPE_RINGTONE, pickedUri);
+						return context.getString(R.string.changed_ringtone) + " - " + name;
+					} catch (Exception ignored) {
+					}
 				}
-			}
-
-			if (path != null && name != null) {
-				try {
-					Uri pickedUri = C.getUriByPath(path);
-
-					RingtoneManager.setActualDefaultRingtoneUri(context,
-							RingtoneManager.TYPE_RINGTONE, pickedUri);
-					return context.getString(R.string.changed_ringtone) + " - " + name;
-
-				} catch (Exception ignored) {
-				}
-			}
 		}
 		return context.getString(R.string.notyet);
 	}

@@ -14,7 +14,7 @@
     <string name="about_navbtn">OK</string>
     <string name="report">Report</string>
     <string name="report_title">Ringtone Randomizer V2.0: Report and Feedback</string>
-    <string name="report_subject">My ANDROID Device: \n\nHere is my message: \n</string>
+    <string name="report_subject">Here is my message: \n</string>
     <string name="report_des">hibernatev2@gmail.com</string>
     <string name="qanda">FAQ</string>
     <string name="qanda_message">Q. Why did not the app change ringtone while incoming call?\n\n
@@ -26,6 +26,8 @@
         3. Do not kill this app and stop the service.\n
         \n
         4. Do not move app to sdcard (Move2SD).\n
+        \n
+        5. May not support Dual Sims phone which is Android 4.1 - Android 5.0. Google has release native multiple sIM card support on Android 5.1+. Please consider upgrade your phone.
 </string>
     <!--  -->
     <string name="app_name">Ringtone Randomizer</string>
@@ -78,5 +80,10 @@
     <string name="iab_complete_title">Thanks</string>
     <string name="current">Current Ringtone</string>
     <string name="ui_share">Share</string>
+
+    <string name="shortcut_action_change">Change ringtone</string>
+    <string name="shortcut_action_add">Add New</string>
+    <string name="dual_sim_warning">May not support Dual Sims phone.</string>
+    <string name="ui_more">More details</string>
 
 </resources>

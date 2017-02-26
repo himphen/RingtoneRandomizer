@@ -11,6 +11,11 @@
     <string name="pref_title_enable">Enable</string>
     <string name="pref_des_enableOn">Change the ringtone while incoming call.</string>
     <string name="pref_des_enableOff">Ringtone will not be changed while incoming call.</string>
+
+    <string name="pref_title_dual_warning">Dual Sims Warning</string>
+    <string name="pref_des_dualOn">Show warning if Dual Sims phone is detected.</string>
+    <string name="pref_des_dualOff">Don\'t show warning.</string>
+
     <string name="pref_language">Language</string>
     <string name="pref_language_sum">Restart this app after changing the language.</string>
     <string-array name="pref_language_list_titles" translatable="false">

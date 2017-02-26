@@ -3,11 +3,15 @@ package hibernate.v2.ringtonerandomizer;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
+import android.view.View;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.IOException;
@@ -118,5 +122,13 @@ public class C extends Util {
 		}
 
 		return pickedUri;
+	}
+
+	public static Snackbar initSnackbar(Snackbar snackbar) {
+		View sbView = snackbar.getView();
+		sbView.setBackgroundResource(R.color.primary_dark);
+		((TextView) sbView.findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.WHITE);
+		((TextView) sbView.findViewById(android.support.design.R.id.snackbar_action)).setTextColor(Color.YELLOW);
+		return snackbar;
 	}
 }

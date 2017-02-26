@@ -21,7 +21,7 @@ import hibernate.v2.ringtonerandomizer.model.Ringtone;
 /**
  * Created by himphen on 25/5/16.
  */
-public class RingtoneChooseAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class RingtoneSelectAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 	private List<Ringtone> mDataList;
 	private ItemClickListener mClickListener;
@@ -36,7 +36,7 @@ public class RingtoneChooseAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 		void onItemDetailCheck(Ringtone ringtone, boolean isChecked);
 	}
 
-	public RingtoneChooseAdapter(List<Ringtone> mDataList,
+	public RingtoneSelectAdapter(List<Ringtone> mDataList,
 	                             ItemClickListener mClickListener,
 	                             ItemCheckListener mCheckListener) {
 		this.mDataList = mDataList;
@@ -48,7 +48,7 @@ public class RingtoneChooseAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 		Context context = parent.getContext();
 
-		View itemView = LayoutInflater.from(context).inflate(R.layout.choose_list_item, parent, false);
+		View itemView = LayoutInflater.from(context).inflate(R.layout.list_item_select, parent, false);
 		return new ItemViewHolder(itemView);
 	}
 

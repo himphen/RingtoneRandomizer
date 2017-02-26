@@ -1,17 +1,18 @@
 package hibernate.v2.ringtonerandomizer.ui.fragment;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,11 +23,14 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import hibernate.v2.ringtonerandomizer.C;
 import hibernate.v2.ringtonerandomizer.R;
 import hibernate.v2.ringtonerandomizer.model.Ringtone;
+import hibernate.v2.ringtonerandomizer.ui.activity.MainActivity;
 import hibernate.v2.ringtonerandomizer.ui.activity.SelectRingtoneActivity;
 import hibernate.v2.ringtonerandomizer.ui.adapter.RingtoneSelectedAdapter;
+import hibernate.v2.ringtonerandomizer.ui.custom.TelephonyInfo;
 import hibernate.v2.ringtonerandomizer.utils.DBHelper;
 
 public class MainFragment extends BaseFragment {
@@ -35,20 +39,20 @@ public class MainFragment extends BaseFragment {
 	RecyclerView recyclerView;
 	@BindView(R.id.currentText)
 	TextView currentText;
-	@BindView(R.id.random_img)
-	ImageView randomImg;
-	@BindView(R.id.add_img)
-	ImageView addImg;
-	@BindView(R.id.clear_img)
-	ImageView clearImg;
 
 	private ArrayList<Ringtone> ringtoneList = new ArrayList<>();
 	private DBHelper dbhelper;
 	private SQLiteDatabase db;
 	private RingtoneSelectedAdapter ringtoneSelectedAdapter;
 
-	public MainFragment() {
-		// Required empty public constructor
+	public static MainFragment getInstance(boolean isShortcutUpdate) {
+		MainFragment fragment = new MainFragment();
+
+		Bundle args = new Bundle();
+		args.putBoolean("shortcut_action", isShortcutUpdate);
+		fragment.setArguments(args);
+
+		return fragment;
 	}
 
 	@Override
@@ -61,34 +65,12 @@ public class MainFragment extends BaseFragment {
 	}
 
 	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-	}
-
-	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 
-		recyclerView.setLayoutManager(
-				new LinearLayoutManager(mContext,
-						LinearLayoutManager.VERTICAL, false)
+		recyclerView.setLayoutManager(new LinearLayoutManager(mContext,
+				LinearLayoutManager.VERTICAL, false)
 		);
-		randomImg.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View arg0) {
-				random();
-			}
-		});
-		addImg.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View arg0) {
-				startActivity(new Intent().setClass(mContext,
-						SelectRingtoneActivity.class));
-			}
-		});
-		clearImg.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View arg0) {
-				openDialogClearData();
-			}
-		});
 		openDatabase();
 		getCurrent();
 
@@ -101,6 +83,26 @@ public class MainFragment extends BaseFragment {
 
 		ringtoneSelectedAdapter = new RingtoneSelectedAdapter(ringtoneList, mClickListener);
 		recyclerView.setAdapter(ringtoneSelectedAdapter);
+
+		Bundle bundle = getArguments();
+		if (bundle != null) {
+			if (bundle.getBoolean("shortcut_action", false)) {
+				onClickRandom();
+			}
+		}
+
+		SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(mContext);
+		TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(mContext);
+		if (telephonyInfo.isDualSIM() && telephonyInfo.isSIM2Ready() && setting.getBoolean("pref_dual_warning", true)) {
+			Snackbar snackbar = Snackbar.make(currentText, R.string.dual_sim_warning, Snackbar.LENGTH_LONG);
+			snackbar.setAction(R.string.ui_more, new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					((MainActivity) getActivity()).openDialogTutor();
+				}
+			});
+			C.initSnackbar(snackbar).show();
+		}
 	}
 
 	@Override
@@ -115,7 +117,6 @@ public class MainFragment extends BaseFragment {
 		closeDatabase();
 	}
 
-
 	private void openDatabase() {
 		dbhelper = new DBHelper(mContext);
 		db = dbhelper.getWritableDatabase();
@@ -126,11 +127,17 @@ public class MainFragment extends BaseFragment {
 		dbhelper.close();
 	}
 
-	private void random() {
+	@OnClick(R.id.random_img)
+	public void onClickRandom() {
 		Toast.makeText(mContext,
 				DBHelper.changeRingtone(db, mContext, null),
 				Toast.LENGTH_SHORT).show();
 		getCurrent();
+	}
+
+	@OnClick(R.id.add_img)
+	public void onClickAddRingtone() {
+		startActivity(new Intent().setClass(mContext, SelectRingtoneActivity.class));
 	}
 
 	private void getCurrent() {
@@ -138,18 +145,20 @@ public class MainFragment extends BaseFragment {
 	}
 
 	private class GetAllSavedSongTask extends AsyncTask<Void, Void, Void> {
-		private ProgressDialog dialog = new ProgressDialog(mContext);
+		private MaterialDialog dialog;
 
 		public void onPreExecute() {
 			super.onPreExecute();
-			dialog.setCancelable(false);
-			dialog.setMessage(getString(R.string.wait));
-			dialog.show();
+			dialog = new MaterialDialog.Builder(mContext)
+					.content(R.string.wait)
+					.progress(true, 0)
+					.cancelable(false)
+					.show();
+			ringtoneList.clear();
 		}
 
 		@Override
 		public Void doInBackground(Void... arg0) {
-			ringtoneList.clear();
 			ringtoneList.addAll(DBHelper.getDBSongList(db, mContext));
 			return null;
 		}
@@ -160,6 +169,7 @@ public class MainFragment extends BaseFragment {
 		}
 	}
 
+	@OnClick(R.id.clear_img)
 	public void openDialogClearData() {
 		MaterialDialog.Builder dialog = new MaterialDialog.Builder(mContext)
 				.title(R.string.clear_title)
@@ -170,8 +180,6 @@ public class MainFragment extends BaseFragment {
 					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 						DBHelper.clearDBSongList(db);
 						new GetAllSavedSongTask().execute();
-						Toast.makeText(mContext,
-								R.string.clear_done, Toast.LENGTH_SHORT).show();
 					}
 				})
 				.negativeText(R.string.clear_navbtn);
@@ -191,9 +199,6 @@ public class MainFragment extends BaseFragment {
 						public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 							DBHelper.changeRingtone(db, mContext, path);
 							getCurrent();
-							Toast.makeText(mContext,
-									R.string.item_done, Toast.LENGTH_SHORT).show();
-							ringtoneSelectedAdapter.notifyDataSetChanged();
 						}
 					})
 					.neutralText(R.string.item_netbtn)
@@ -202,9 +207,6 @@ public class MainFragment extends BaseFragment {
 						public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 							DBHelper.deleteDBSong(db, path);
 							new GetAllSavedSongTask().execute();
-							Toast.makeText(mContext,
-									R.string.clear_done, Toast.LENGTH_SHORT).show();
-							ringtoneSelectedAdapter.notifyDataSetChanged();
 						}
 					})
 					.negativeText(R.string.item_navbtn);

@@ -8,8 +8,8 @@ android {
         applicationId "hibernate.v2.ringtonerandomizer"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 162210
-        versionName "2.2.1"
+        versionCode 162300
+        versionName "2.3.0"
         multiDexEnabled true
     }
 

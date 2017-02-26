@@ -28,7 +28,7 @@
         \n
         4. 請避免將此程式安裝至SD卡。\n
         \n
-        5. 啊哈，可能是個別Android設備問題，開發人員盡力確保各型號的相容性，請給我們一些時間解決。\n
+        5. 由於 Google 只在 Android 5.1 或以上支援原生雙卡 API，因此 Android 5.0 或以下部份雙卡電話未能支援此程式。
 </string>
     <!--  -->
     <string name="app_name">隨機鈴聲工具</string>
@@ -79,5 +79,9 @@
     <string name="iab_complete_title">感謝</string>
     <string name="current">現在鈴聲</string>
     <string name="ui_caution">注意</string>
+    <string name="shortcut_action_add">加入鈴聲</string>
+    <string name="shortcut_action_change">更改鈴聲</string>
+    <string name="dual_sim_warning">未能支援部份雙卡電話。</string>
+    <string name="ui_more">了解更多</string>
 
 </resources>

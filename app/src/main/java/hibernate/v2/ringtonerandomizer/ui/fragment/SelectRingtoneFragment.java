@@ -28,7 +28,7 @@ import butterknife.OnClick;
 import hibernate.v2.ringtonerandomizer.C;
 import hibernate.v2.ringtonerandomizer.R;
 import hibernate.v2.ringtonerandomizer.model.Ringtone;
-import hibernate.v2.ringtonerandomizer.ui.adapter.RingtoneChooseAdapter;
+import hibernate.v2.ringtonerandomizer.ui.adapter.RingtoneSelectAdapter;
 import hibernate.v2.ringtonerandomizer.utils.DBHelper;
 
 public class SelectRingtoneFragment extends BaseFragment {
@@ -49,7 +49,7 @@ public class SelectRingtoneFragment extends BaseFragment {
 	private DBHelper dbhelper;
 
 	private SQLiteDatabase db;
-	private RingtoneChooseAdapter ringtoneChooseAdapter;
+	private RingtoneSelectAdapter ringtoneSelectAdapter;
 
 	public SelectRingtoneFragment() {
 		// Required empty public constructor
@@ -59,7 +59,7 @@ public class SelectRingtoneFragment extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
 		// Inflate the layout for mContext fragment
-		View rootView = inflater.inflate(R.layout.fragment_choose, container, false);
+		View rootView = inflater.inflate(R.layout.fragment_select_ringtone, container, false);
 		ButterKnife.bind(this, rootView);
 		return rootView;
 	}
@@ -148,26 +148,26 @@ public class SelectRingtoneFragment extends BaseFragment {
 		public void onPostExecute(Void un) {
 			showList = new ArrayList<>(allSongList);
 
-			RingtoneChooseAdapter.ItemClickListener mClickListener = new RingtoneChooseAdapter.ItemClickListener() {
+			RingtoneSelectAdapter.ItemClickListener mClickListener = new RingtoneSelectAdapter.ItemClickListener() {
 				@Override
 				public void onItemDetailClick(Ringtone ringtone) {
 					openDialogPlayingPreview(ringtone.getPath());
 				}
 			};
 
-			RingtoneChooseAdapter.ItemCheckListener mCheckListener = new RingtoneChooseAdapter.ItemCheckListener() {
+			RingtoneSelectAdapter.ItemCheckListener mCheckListener = new RingtoneSelectAdapter.ItemCheckListener() {
 				@Override
 				public void onItemDetailCheck(Ringtone ringtone, boolean isChecked) {
 					if (isChecked) {
-						ringtoneChooseAdapter.addRingtone(ringtone);
+						ringtoneSelectAdapter.addRingtone(ringtone);
 					} else {
-						ringtoneChooseAdapter.removeRingtone(ringtone);
+						ringtoneSelectAdapter.removeRingtone(ringtone);
 					}
 				}
 			};
 
-			ringtoneChooseAdapter = new RingtoneChooseAdapter(showList, mClickListener, mCheckListener);
-			recyclerView.setAdapter(ringtoneChooseAdapter);
+			ringtoneSelectAdapter = new RingtoneSelectAdapter(showList, mClickListener, mCheckListener);
+			recyclerView.setAdapter(ringtoneSelectAdapter);
 			dialog.dismiss();
 		}
 	}
@@ -211,7 +211,7 @@ public class SelectRingtoneFragment extends BaseFragment {
 
 	@OnClick(R.id.saveBtn)
 	public void onClickSaveList() {
-		HashMap<String, Ringtone> ringtoneHashMap = ringtoneChooseAdapter.getSelectedRingtoneMap();
+		HashMap<String, Ringtone> ringtoneHashMap = ringtoneSelectAdapter.getSelectedRingtoneMap();
 		for (Map.Entry<String, Ringtone> ringtone : ringtoneHashMap.entrySet()) {
 			chosenSongList.add(ringtone.getValue());
 		}
@@ -235,7 +235,7 @@ public class SelectRingtoneFragment extends BaseFragment {
 								showList.add(ringtone);
 							}
 						}
-						ringtoneChooseAdapter.notifyDataSetChanged();
+						ringtoneSelectAdapter.notifyDataSetChanged();
 						return true;
 					}
 				})

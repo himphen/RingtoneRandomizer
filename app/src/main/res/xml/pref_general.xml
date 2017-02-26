@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:title="@string/setting">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/setting">
 
     <PreferenceCategory android:title="@string/pref_category_general">
         <ListPreference
@@ -25,6 +26,13 @@
         android:summaryOff="@string/pref_des_changed_notificationOff"
         android:summaryOn="@string/pref_des_changed_notificationOn"
         android:title="@string/pref_title_changed_notification"/>
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="pref_dual_warning"
+        android:summaryOff="@string/pref_des_dualOff"
+        android:summaryOn="@string/pref_des_dualOn"
+        android:title="@string/pref_title_dual_warning"/>
 
     <PreferenceCategory android:title="@string/pref_category_more">
         <Preference

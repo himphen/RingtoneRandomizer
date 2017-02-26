@@ -99,7 +99,12 @@ public class MainActivity extends BaseActivity {
 
 		adView = C.initAdView(mContext, adLayout);
 
-		Fragment fragment = new MainFragment();
+		boolean isShortcutUpdate = false;
+		if (getIntent() != null) {
+			isShortcutUpdate = getIntent().getBooleanExtra("shortcut_action_change", false);
+		}
+
+		Fragment fragment = MainFragment.getInstance(isShortcutUpdate);
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		fragmentManager.beginTransaction()
 				.replace(R.id.container, fragment)
@@ -149,7 +154,7 @@ public class MainActivity extends BaseActivity {
 				getResources().getString(R.string.share_button)));
 	}
 
-	private void openDialogTutor() {
+	public void openDialogTutor() {
 		MaterialDialog.Builder dialog = new MaterialDialog.Builder(mContext)
 				.title(R.string.qanda)
 				.content(R.string.qanda_message)
