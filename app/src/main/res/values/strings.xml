@@ -10,10 +10,9 @@
     <string name="pref_category_more">App Information</string>
     <string name="pref_category_general">General</string>
     <string name="version">Version</string>
-    <string name="version_des">2.0</string>
     <string name="about_navbtn">OK</string>
     <string name="report">Report</string>
-    <string name="report_title">Ringtone Randomizer V2.0: Report and Feedback</string>
+    <string name="report_title">Ringtone Randomizer: Report and Feedback</string>
     <string name="report_subject">Here is my message: \n</string>
     <string name="report_des">hibernatev2@gmail.com</string>
     <string name="qanda">FAQ</string>

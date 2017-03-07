@@ -44,7 +44,6 @@
             android:title="@string/more_app"/>
         <Preference
             android:key="pref_version"
-            android:summary="@string/version_des"
             android:title="@string/version"/>
     </PreferenceCategory>
 

@@ -59,8 +59,7 @@ public class SettingsFragment extends BasePreferenceFragment {
 		intent.putExtra(Intent.EXTRA_EMAIL, tos);
 		intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.report_title));
 		intent.putExtra(Intent.EXTRA_TEXT, Build.BRAND + " " + Build.DEVICE
-				+ " " + Build.VERSION.RELEASE + " "
-				+ getString(R.string.version_des) + "\n\n"
+				+ " " + Build.VERSION.RELEASE + " " + "\n\n"
 				+ getString(R.string.report_subject) + "\n\n");
 		intent.setType("message/rfc822");
 		startActivity(Intent.createChooser(intent, getString(R.string.report)));
