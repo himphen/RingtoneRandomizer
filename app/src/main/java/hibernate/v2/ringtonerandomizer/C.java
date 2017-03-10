@@ -24,14 +24,6 @@ import hibernate.v2.ringtonerandomizer.model.Ringtone;
 public class C extends Util {
 	public static final String TAG = "tag";
 
-	// DATABASE
-	public static final String DB_TABLE_NOTI = "notification_table";
-	public static final String DB_COL_NAME = "name";
-	public static final String DB_COL_PATH = "path";
-
-	@Deprecated
-	public static final String DB_COL_POSITION = "position";
-
 	public static ArrayList<Ringtone> getDeviceSongList(Context context) {
 		ArrayList<Ringtone> allSongList = new ArrayList<>();
 		try {

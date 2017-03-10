@@ -27,7 +27,11 @@ public class DBHelper extends SQLiteOpenHelper {
 	private final static String DATABASE_NAME = "ringtone.db";
 	private static final String DB_TABLE_RINGTONE = "ringtone_table";
 
-	private final static int DATABASE_VERSION = 1;
+
+	public static final String DB_COL_NAME = "name";
+	public static final String DB_COL_PATH = "path";
+
+	private final static int DATABASE_VERSION = 2;
 
 	public DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -36,13 +40,9 @@ public class DBHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		final String INIT_TABLE = "CREATE TABLE " + DB_TABLE_RINGTONE + " ("
-				+ _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + C.DB_COL_NAME
-				+ " text, " + C.DB_COL_PATH + " text);";
+				+ _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + DB_COL_NAME
+				+ " text, " + DB_COL_PATH + " text);";
 		db.execSQL(INIT_TABLE);
-		final String INIT_TABLE2 = "CREATE TABLE " + C.DB_TABLE_NOTI + " ("
-				+ _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + C.DB_COL_NAME
-				+ " text, " + C.DB_COL_PATH + " text);";
-		db.execSQL(INIT_TABLE2);
 	}
 
 	@Override
@@ -57,8 +57,8 @@ public class DBHelper extends SQLiteOpenHelper {
 	public static Ringtone getDBSong(SQLiteDatabase db, String path) {
 		Log.i(C.TAG, "getDBSong");
 		try {
-			Cursor cursor = db.query(DB_TABLE_RINGTONE, new String[]{C.DB_COL_NAME,
-					C.DB_COL_PATH}, C.DB_COL_PATH + "="
+			Cursor cursor = db.query(DB_TABLE_RINGTONE, new String[]{DB_COL_NAME,
+					DB_COL_PATH}, DB_COL_PATH + "="
 					+ DatabaseUtils.sqlEscapeString(path), null, null, null, null);
 			cursor.moveToFirst();
 			if (cursor.getCount() == 0) {
@@ -83,7 +83,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		checkExist(db, context);
 		ArrayList<Ringtone> ringtoneList = new ArrayList<>();
 		Cursor cursor = db.query(DB_TABLE_RINGTONE,
-				new String[]{C.DB_COL_NAME, C.DB_COL_PATH},
+				new String[]{DB_COL_NAME, DB_COL_PATH},
 				null, null, null, null, null);
 		while (cursor.moveToNext()) {
 			Ringtone ringtone = new Ringtone();
@@ -110,15 +110,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	public static void deleteDBSong(SQLiteDatabase db, String path) {
 		Log.i(C.TAG, "deleteDBSong");
-		db.delete(DB_TABLE_RINGTONE, C.DB_COL_PATH + "=" + DatabaseUtils.sqlEscapeString(path), null);
+		db.delete(DB_TABLE_RINGTONE, DB_COL_PATH + "=" + DatabaseUtils.sqlEscapeString(path), null);
 	}
 
 	public static void insertDBSong(SQLiteDatabase db, Ringtone ringtone) {
 		Log.i(C.TAG, "insertDBSong");
 		if (getDBSong(db, ringtone.getPath()) == null) {
 			ContentValues values = new ContentValues();
-			values.put(C.DB_COL_NAME, ringtone.getName());
-			values.put(C.DB_COL_PATH, ringtone.getPath());
+			values.put(DB_COL_NAME, ringtone.getName());
+			values.put(DB_COL_PATH, ringtone.getPath());
 			db.insert(DB_TABLE_RINGTONE, null, values);
 		} else
 			Log.i(C.TAG, "exist");
@@ -129,8 +129,8 @@ public class DBHelper extends SQLiteOpenHelper {
 		ArrayList<Ringtone> allSongList = new ArrayList<>();
 		ArrayList<String> deleteList = new ArrayList<>();
 		allSongList.addAll(C.getDeviceSongList(context));
-		Cursor cursor = db.query(DB_TABLE_RINGTONE, new String[]{C.DB_COL_NAME,
-						C.DB_COL_PATH}, null, null, null, null,
+		Cursor cursor = db.query(DB_TABLE_RINGTONE, new String[]{DB_COL_NAME,
+						DB_COL_PATH}, null, null, null, null,
 				null);
 		while (cursor.moveToNext()) {
 			boolean exist = false;
@@ -159,14 +159,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
 		String currentRingtonePath = currentUri.toString();
 
-		String selection = C.DB_COL_PATH
+		String selection = DB_COL_PATH
 				+ " != "
 				+ DatabaseUtils.sqlEscapeString(currentRingtonePath);
 
 		Log.i(C.TAG, "selection: " + selection);
 		try {
-			Cursor cursor = db.query(DB_TABLE_RINGTONE, new String[]{C.DB_COL_NAME,
-							C.DB_COL_PATH}, selection, null, null,
+			Cursor cursor = db.query(DB_TABLE_RINGTONE, new String[]{DB_COL_NAME,
+							DB_COL_PATH}, selection, null, null,
 					null, "RANDOM()");
 
 			Log.i(C.TAG, "cursor.getCount(): " + cursor.getCount());
