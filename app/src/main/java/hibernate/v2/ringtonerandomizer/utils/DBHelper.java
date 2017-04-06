@@ -207,24 +207,26 @@ public class DBHelper extends SQLiteOpenHelper {
 			case 1:
 				return context.getString(R.string.changed_ringtone_one);
 			default:
+				String ringtoneID = null;
 				String name = null;
 				if (path == null) {
 					Ringtone bean = getDBRandomSong(db, context);
 					if (bean != null) {
-						path = bean.getPath();
+						ringtoneID = getIDByPath(context, bean.getPath());
 						name = bean.getName();
 					}
 				} else {
 					Ringtone bean = getDBSong(db, path);
 					if (bean != null) {
+						ringtoneID = getIDByPath(context, path);
 						name = bean.getName();
 					}
 				}
 
-				if (path != null && name != null) {
+				if (ringtoneID != null && name != null) {
 					try {
-						Uri pickedUri = C.getUriByPath(path);
-
+						Uri pickedUri = Uri.parse("content://media/external/audio/media/"
+								+ ringtoneID);
 						RingtoneManager.setActualDefaultRingtoneUri(context,
 								RingtoneManager.TYPE_RINGTONE, pickedUri);
 						return context.getString(R.string.changed_ringtone) + " - " + name;
@@ -233,5 +235,18 @@ public class DBHelper extends SQLiteOpenHelper {
 				}
 		}
 		return context.getString(R.string.notyet);
+	}
+
+
+	@Nullable
+	public static String getIDByPath(Context context, String path) {
+		ArrayList<Ringtone> allSongList = C.getDeviceSongList(context);
+		for (Ringtone ringtone : allSongList) {
+			if (path.equals(ringtone.getPath())) {
+				return ringtone.getMusicId();
+			}
+		}
+
+		return null;
 	}
 }

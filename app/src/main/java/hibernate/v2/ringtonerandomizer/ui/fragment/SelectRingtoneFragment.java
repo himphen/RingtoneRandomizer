@@ -202,10 +202,6 @@ public class SelectRingtoneFragment extends BaseFragment {
 		alFilter.clear();
 		alFilter.addAll(alFilterRingtone);
 		alFilter.addAll(alFilterTemp);
-
-		for (String element : alFilter) {
-			Log.i("alFilter", element);
-		}
 	}
 
 
@@ -243,10 +239,16 @@ public class SelectRingtoneFragment extends BaseFragment {
 		dialog.show();
 	}
 
-	private void openDialogPlayingPreview(String path) {
+	private void openDialogPlayingPreview(String string) {
 		try {
-			Uri pickedUri = C.getUriByPath(path);
-			mediaPlayer = MediaPlayer.create(mContext, pickedUri);
+			mediaPlayer = MediaPlayer.create(mContext,
+					Uri.parse("content://media/external/audio/media/" + DBHelper.getIDByPath(mContext, string)));
+			mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+				@Override
+				public void onCompletion(MediaPlayer arg0) {
+					stopPlaying();
+				}
+			});
 			mediaPlayer.setLooping(true);
 			mediaPlayer.start();
 			MaterialDialog.Builder dialog = new MaterialDialog.Builder(mContext)
