@@ -28,8 +28,8 @@
                 android:padding="8dp"
                 android:text="@string/current"
                 android:textSize="22sp"
-                app:fontFamily="roboto"
-                app:textWeight="bold"/>
+                app:robotoFontFamily="roboto"
+                app:robotoTextWeight="bold"/>
 
             <View style="@style/Border"/>
 
@@ -40,7 +40,7 @@
                 android:padding="8dp"
                 android:text="@string/add_button"
                 android:textSize="18sp"
-                app:fontFamily="roboto"/>
+                app:robotoFontFamily="roboto"/>
         </LinearLayout>
 
         <LinearLayout
@@ -54,8 +54,8 @@
                 android:padding="8dp"
                 android:text="@string/ringtone_main"
                 android:textSize="22sp"
-                app:fontFamily="roboto"
-                app:textWeight="bold"/>
+                app:robotoFontFamily="roboto"
+                app:robotoTextWeight="bold"/>
 
             <View style="@style/Border"/>
 
