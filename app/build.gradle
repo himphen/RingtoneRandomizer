@@ -1,40 +1,57 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.firebase.firebase-perf'
+apply plugin: 'io.fabric'
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId "hibernate.v2.ringtonerandomizer"
-        minSdkVersion 16
-        targetSdkVersion 21
-        versionCode 1602600
-        versionName "2.6.0"
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 213100
+        versionName "3.1.0"
         multiDexEnabled true
     }
 
     buildTypes {
         debug {
-            minifyEnabled false
             debuggable true
+            minifyEnabled false
+            shrinkResources false
+            useProguard false
             buildConfigField "String", "ADMOB_KEY", "\"" + getSecretKey("ADMOB_KEY") + "\""
-            buildConfigField "String[]", "DEVICE_ID", getSecretKey("DEVICE_ID")
-            resValue "string", "GOOGLE_API_KEY", "\"" + getSecretKey("GOOGLE_API_KEY") + "\""
+            buildConfigField "String", "ADMOB_APP_ID", "\"" + getSecretKey("ADMOB_APP_ID") + "\""
+            resValue "string", "ADMOB_APP_ID", getSecretKey("ADMOB_APP_ID")
+            buildConfigField "String[]", "ADMOB_DEVICE_ID", getSecretKey("ADMOB_DEVICE_ID")
             buildConfigField "String", "GOOGLE_IAP_KEY", "\"" + getSecretKey("GOOGLE_IAP_KEY") + "\""
+            buildConfigField "String", "CONTACT_EMAIL", "\"" + getSecretKey("CONTACT_EMAIL") + "\""
+            resValue "string", "CONTACT_EMAIL", getSecretKey("CONTACT_EMAIL")
         }
         release {
-            minifyEnabled true
             debuggable false
+            minifyEnabled true
+            shrinkResources true
+            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField "String", "ADMOB_KEY", "\"" + getSecretKey("ADMOB_KEY") + "\""
-            buildConfigField "String[]", "DEVICE_ID", getSecretKey("DEVICE_ID")
-            resValue "string", "GOOGLE_API_KEY", "\"" + getSecretKey("GOOGLE_API_KEY") + "\""
+            buildConfigField "String", "ADMOB_APP_ID", "\"" + getSecretKey("ADMOB_APP_ID") + "\""
+            resValue "string", "ADMOB_APP_ID", getSecretKey("ADMOB_APP_ID")
+            buildConfigField "String[]", "ADMOB_DEVICE_ID", getSecretKey("ADMOB_DEVICE_ID")
             buildConfigField "String", "GOOGLE_IAP_KEY", "\"" + getSecretKey("GOOGLE_IAP_KEY") + "\""
+            buildConfigField "String", "CONTACT_EMAIL", "\"" + getSecretKey("CONTACT_EMAIL") + "\""
+            resValue "string", "CONTACT_EMAIL", getSecretKey("CONTACT_EMAIL")
         }
     }
 
     dexOptions {
         javaMaxHeapSize "4g"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
@@ -51,27 +68,35 @@ static def getSecretKey(name) {
 
 dependencies {
     // Google Android Support
-    compile 'com.android.support:multidex:1.0.2'
-    compile 'com.android.support:appcompat-v7:27.0.2'
-    compile 'com.android.support:support-v4:27.0.2'
-    compile 'com.android.support:design:27.0.2'
-    compile 'com.android.support:cardview-v7:27.0.2'
-    compile 'com.android.support:preference-v14:27.0.2'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support:cardview-v7:28.0.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.android.support:preference-v14:28.0.0'
 
     // Google Play Services
-    compile 'com.google.android.gms:play-services-ads:11.8.0'
-    compile 'com.google.android.gms:play-services-analytics:11.8.0'
+    implementation 'com.google.firebase:firebase-core:16.0.7'
+    implementation 'com.google.firebase:firebase-ads:17.2.0'
 
-    // Roboto TextView
-    compile 'com.github.johnkil.android-robototextview:robototextview:4.0.0'
-
-    // RxBinding Butter Knife
-    compile 'com.jakewharton:butterknife:8.8.1'
+    // https://github.com/JakeWharton/butterknife
+    implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
     // Material Dialog
-    compile 'com.afollestad.material-dialogs:core:0.9.6.0'
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 
     // Simple IAB
-    compile 'com.anjlab.android.iab.v3:library:1.0.44'
+    implementation 'com.anjlab.android.iab.v3:library:1.0.44'
+
+    // https://github.com/Blankj/AndroidUtilCode
+    implementation 'com.blankj:utilcode:1.23.7'
+
+    // Crashlytics
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
+
+    // https://github.com/javiersantos/AppUpdater
+    implementation 'com.github.javiersantos:AppUpdater:2.7'
 }
+
+apply plugin: 'com.google.gms.google-services'

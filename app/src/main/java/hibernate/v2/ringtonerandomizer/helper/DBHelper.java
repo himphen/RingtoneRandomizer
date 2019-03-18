@@ -1,4 +1,4 @@
-package hibernate.v2.ringtonerandomizer.utils;
+package hibernate.v2.ringtonerandomizer.helper;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,7 +10,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,8 +27,8 @@ public class DBHelper extends SQLiteOpenHelper {
 	private static final String DB_TABLE_RINGTONE = "ringtone_table";
 
 
-	public static final String DB_COL_NAME = "name";
-	public static final String DB_COL_PATH = "path";
+	private static final String DB_COL_NAME = "name";
+	private static final String DB_COL_PATH = "path";
 
 	private final static int DATABASE_VERSION = 2;
 
@@ -54,8 +53,8 @@ public class DBHelper extends SQLiteOpenHelper {
 
 
 	@Nullable
-	public static Ringtone getDBSong(SQLiteDatabase db, String path) {
-		Log.i(C.TAG, "getDBSong");
+	public static Ringtone getDBRingtone(SQLiteDatabase db, String path) {
+		C.debug("getDBRingtone");
 		try {
 			Cursor cursor = db.query(DB_TABLE_RINGTONE, new String[]{DB_COL_NAME,
 					DB_COL_PATH}, DB_COL_PATH + "="
@@ -78,8 +77,8 @@ public class DBHelper extends SQLiteOpenHelper {
 	}
 
 
-	public static ArrayList<Ringtone> getDBSongList(SQLiteDatabase db, Context context) {
-		Log.i(C.TAG, "getDBSongList");
+	public static ArrayList<Ringtone> getDBRingtoneList(SQLiteDatabase db, Context context) {
+		C.debug("getDBRingtoneList");
 		checkExist(db, context);
 		ArrayList<Ringtone> ringtoneList = new ArrayList<>();
 		Cursor cursor = db.query(DB_TABLE_RINGTONE,
@@ -90,6 +89,8 @@ public class DBHelper extends SQLiteOpenHelper {
 			ringtone.setName(cursor.getString(0));
 			ringtone.setPath(cursor.getString(1));
 			ringtoneList.add(ringtone);
+
+			C.debug("Add ringtone: " + ringtone);
 		}
 		cursor.close();
 
@@ -103,38 +104,38 @@ public class DBHelper extends SQLiteOpenHelper {
 		return ringtoneList;
 	}
 
-	public static void clearDBSongList(SQLiteDatabase db) {
-		Log.i(C.TAG, "clearDBSongList");
+	public static void clearDBRingtoneList(SQLiteDatabase db) {
+		C.debug("clearDBRingtoneList");
 		db.delete(DB_TABLE_RINGTONE, null, null);
 	}
 
-	public static void deleteDBSong(SQLiteDatabase db, String path) {
-		Log.i(C.TAG, "deleteDBSong");
+	public static void deleteDBRingtone(SQLiteDatabase db, String path) {
+		C.debug("deleteDBRingtone");
 		db.delete(DB_TABLE_RINGTONE, DB_COL_PATH + "=" + DatabaseUtils.sqlEscapeString(path), null);
 	}
 
-	public static void insertDBSong(SQLiteDatabase db, Ringtone ringtone) {
-		Log.i(C.TAG, "insertDBSong");
-		if (getDBSong(db, ringtone.getPath()) == null) {
+	public static void insertDBRingtone(SQLiteDatabase db, Ringtone ringtone) {
+		C.debug("insertDBRingtone");
+		if (getDBRingtone(db, ringtone.getPath()) == null) {
 			ContentValues values = new ContentValues();
 			values.put(DB_COL_NAME, ringtone.getName());
 			values.put(DB_COL_PATH, ringtone.getPath());
 			db.insert(DB_TABLE_RINGTONE, null, values);
-		} else
-			Log.i(C.TAG, "exist");
+		} else {
+			C.debug("exist");
+		}
 	}
 
-	private static void checkExist(SQLiteDatabase db, Context context) {
-		Log.i(C.TAG, "checkExist");
-		ArrayList<Ringtone> allSongList = new ArrayList<>();
+	private static void checkExist(SQLiteDatabase db, Context mContext) {
+		C.debug("checkExist");
 		ArrayList<String> deleteList = new ArrayList<>();
-		allSongList.addAll(C.getDeviceSongList(context));
+		ArrayList<Ringtone> allRingtoneList = new ArrayList<>(C.getDeviceRingtoneList(mContext));
 		Cursor cursor = db.query(DB_TABLE_RINGTONE, new String[]{DB_COL_NAME,
 						DB_COL_PATH}, null, null, null, null,
 				null);
 		while (cursor.moveToNext()) {
 			boolean exist = false;
-			for (Ringtone ringtone : allSongList) {
+			for (Ringtone ringtone : allRingtoneList) {
 				if (cursor.getString(1).equals(ringtone.getPath())) {
 					exist = true;
 					break;
@@ -146,12 +147,12 @@ public class DBHelper extends SQLiteOpenHelper {
 		}
 		cursor.close();
 		for (String e : deleteList) {
-			deleteDBSong(db, e);
+			deleteDBRingtone(db, e);
 		}
 	}
 
 	@Nullable
-	private static Ringtone getDBRandomSong(SQLiteDatabase db, Context context) {
+	private static Ringtone getDBRandomRingtone(SQLiteDatabase db, Context context) {
 		checkExist(db, context);
 
 		Uri currentUri = RingtoneManager.getActualDefaultRingtoneUri(
@@ -163,13 +164,13 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ " != "
 				+ DatabaseUtils.sqlEscapeString(currentRingtonePath);
 
-		Log.i(C.TAG, "selection: " + selection);
+		C.debug("selection: " + selection);
 		try {
 			Cursor cursor = db.query(DB_TABLE_RINGTONE, new String[]{DB_COL_NAME,
 							DB_COL_PATH}, selection, null, null,
 					null, "RANDOM()");
 
-			Log.i(C.TAG, "cursor.getCount(): " + cursor.getCount());
+			C.debug("cursor.getCount(): " + cursor.getCount());
 			cursor.moveToFirst();
 			if (cursor.getCount() == 0) {
 				cursor.close();
@@ -186,8 +187,8 @@ public class DBHelper extends SQLiteOpenHelper {
 		}
 	}
 
-	public static int getDBSongCount(SQLiteDatabase db, Context context) {
-		Log.i(C.TAG, "getDBSongCount");
+	public static int getDBRingtoneCount(SQLiteDatabase db, Context context) {
+		C.debug("getDBRingtoneCount");
 		try {
 			checkExist(db, context);
 			Cursor cursor = db.query(DB_TABLE_RINGTONE, null, null, null, null, null, null);
@@ -199,26 +200,26 @@ public class DBHelper extends SQLiteOpenHelper {
 		}
 	}
 
-	public static String changeRingtone(SQLiteDatabase db, Context context, String path) {
-		int count = getDBSongCount(db, context);
+	public static String changeRingtone(SQLiteDatabase db, Context mContext, String path) {
+		int count = getDBRingtoneCount(db, mContext);
 		switch (count) {
 			case 0:
-				return context.getString(R.string.notyet);
+				return mContext.getString(R.string.notyet);
 			case 1:
-				return context.getString(R.string.changed_ringtone_one);
+				return mContext.getString(R.string.changed_ringtone_one);
 			default:
 				String ringtoneID = null;
 				String name = null;
 				if (path == null) {
-					Ringtone bean = getDBRandomSong(db, context);
-					if (bean != null) {
-						ringtoneID = getIDByPath(context, bean.getPath());
-						name = bean.getName();
+					Ringtone ringtone = getDBRandomRingtone(db, mContext);
+					if (ringtone != null) {
+						ringtoneID = getIDByPath(mContext, ringtone.getPath());
+						name = ringtone.getName();
 					}
 				} else {
-					Ringtone bean = getDBSong(db, path);
+					Ringtone bean = getDBRingtone(db, path);
 					if (bean != null) {
-						ringtoneID = getIDByPath(context, path);
+						ringtoneID = getIDByPath(mContext, path);
 						name = bean.getName();
 					}
 				}
@@ -227,21 +228,21 @@ public class DBHelper extends SQLiteOpenHelper {
 					try {
 						Uri pickedUri = Uri.parse("content://media/external/audio/media/"
 								+ ringtoneID);
-						RingtoneManager.setActualDefaultRingtoneUri(context,
+						RingtoneManager.setActualDefaultRingtoneUri(mContext,
 								RingtoneManager.TYPE_RINGTONE, pickedUri);
-						return context.getString(R.string.changed_ringtone) + " - " + name;
+						return mContext.getString(R.string.changed_ringtone) + " - " + name;
 					} catch (Exception ignored) {
 					}
 				}
 		}
-		return context.getString(R.string.notyet);
+		return mContext.getString(R.string.notyet);
 	}
 
 
 	@Nullable
 	public static String getIDByPath(Context context, String path) {
-		ArrayList<Ringtone> allSongList = C.getDeviceSongList(context);
-		for (Ringtone ringtone : allSongList) {
+		ArrayList<Ringtone> allRingtoneList = C.getDeviceRingtoneList(context);
+		for (Ringtone ringtone : allRingtoneList) {
 			if (path.equals(ringtone.getPath())) {
 				return ringtone.getMusicId();
 			}

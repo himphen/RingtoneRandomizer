@@ -2,6 +2,7 @@ package hibernate.v2.ringtonerandomizer.ui.activity;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
@@ -25,12 +26,10 @@ public class SelectRingtoneActivity extends BaseActivity {
 	@BindView(R.id.adLayout)
 	RelativeLayout adLayout;
 
-
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
 		C.detectLanguage(mContext);
-
 		initActionBar(getSupportActionBar(), R.string.title_activity_choose);
 	}
 
@@ -44,7 +43,12 @@ public class SelectRingtoneActivity extends BaseActivity {
 
 		initActionBar(getSupportActionBar(), R.string.title_activity_choose);
 
-		adView = C.initAdView(mContext, adLayout);
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				adView = C.initAdView(mContext, adLayout);
+			}
+		}, DELAY_AD_LAYOUT);
 
 		Fragment fragment = new SelectRingtoneFragment();
 		FragmentManager fragmentManager = getSupportFragmentManager();

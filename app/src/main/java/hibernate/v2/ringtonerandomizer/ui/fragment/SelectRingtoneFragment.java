@@ -1,14 +1,17 @@
 package hibernate.v2.ringtonerandomizer.ui.fragment;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +19,7 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,18 +31,22 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hibernate.v2.ringtonerandomizer.C;
 import hibernate.v2.ringtonerandomizer.R;
+import hibernate.v2.ringtonerandomizer.helper.DBHelper;
 import hibernate.v2.ringtonerandomizer.model.Ringtone;
 import hibernate.v2.ringtonerandomizer.ui.adapter.RingtoneSelectAdapter;
-import hibernate.v2.ringtonerandomizer.utils.DBHelper;
 
 public class SelectRingtoneFragment extends BaseFragment {
+
+	protected final String[] PERMISSION_NAME = {
+			Manifest.permission.READ_EXTERNAL_STORAGE
+	};
 
 	@BindView(R.id.rvlist)
 	RecyclerView recyclerView;
 
-	private ArrayList<Ringtone> chosenSongList = new ArrayList<>();
-	private ArrayList<Ringtone> allSongList = new ArrayList<>();
-	private ArrayList<Ringtone> showList = new ArrayList<>();
+	private ArrayList<Ringtone> chosenRingtoneList = new ArrayList<>();
+	private ArrayList<Ringtone> allRingtoneList = new ArrayList<>();
+	private ArrayList<Ringtone> shownRingtoneList = new ArrayList<>();
 	private HashSet<String> hsFilter = new HashSet<>();
 	private ArrayList<String> alFilter = new ArrayList<>();
 
@@ -51,28 +59,50 @@ public class SelectRingtoneFragment extends BaseFragment {
 	private SQLiteDatabase db;
 	private RingtoneSelectAdapter ringtoneSelectAdapter;
 
-	public SelectRingtoneFragment() {
-		// Required empty public constructor
-	}
-
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
-		// Inflate the layout for mContext fragment
 		View rootView = inflater.inflate(R.layout.fragment_select_ringtone, container, false);
 		ButterKnife.bind(this, rootView);
 		return rootView;
 	}
 
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
+	public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
 		openDatabase();
 
 		recyclerView.setLayoutManager(new LinearLayoutManager(
 				mContext, LinearLayoutManager.VERTICAL, false));
 
-		new LoadTask().execute();
+		ringtoneSelectAdapter = new RingtoneSelectAdapter(
+				shownRingtoneList,
+				this::openDialogPlayingPreview,
+				new RingtoneSelectAdapter.ItemCheckListener() {
+					@Override
+					public void onItemDetailCheck(Ringtone ringtone, boolean isChecked) {
+						if (isChecked) {
+							ringtoneSelectAdapter.addRingtone(ringtone);
+						} else {
+							ringtoneSelectAdapter.removeRingtone(ringtone);
+						}
+					}
+				}
+		);
+		recyclerView.setAdapter(ringtoneSelectAdapter);
+
+		if (!isPermissionsGranted(PERMISSION_NAME)) {
+			requestPermissions(PERMISSION_NAME, PERMISSION_REQUEST_CODE);
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+
+		if (isPermissionsGranted(PERMISSION_NAME)) {
+			new LoadTask(this).execute();
+		}
 	}
 
 	@Override
@@ -83,8 +113,8 @@ public class SelectRingtoneFragment extends BaseFragment {
 
 	@Override
 	public void onPause() {
-		super.onPause();
 		stopPlaying();
+		super.onPause();
 	}
 
 	private void openDatabase() {
@@ -97,12 +127,26 @@ public class SelectRingtoneFragment extends BaseFragment {
 		dbhelper.close();
 	}
 
-	private class SaveTask extends AsyncTask<Void, Void, Void> {
+	private static class SaveTask extends AsyncTask<Void, Void, Void> {
 		private MaterialDialog dialog;
+		private WeakReference<Fragment> fragmentWeakReference;
+
+		private SaveTask(Fragment fragment) {
+			fragmentWeakReference = new WeakReference<>(fragment);
+		}
 
 		public void onPreExecute() {
 			super.onPreExecute();
-			dialog = new MaterialDialog.Builder(mContext)
+
+			SelectRingtoneFragment fragment = (SelectRingtoneFragment) fragmentWeakReference.get();
+			if (fragment == null) {
+				return;
+			}
+
+			Activity activity = fragment.getActivity();
+			assert activity != null;
+
+			dialog = new MaterialDialog.Builder(activity)
 					.content(R.string.wait)
 					.progress(true, 0)
 					.cancelable(false)
@@ -111,63 +155,84 @@ public class SelectRingtoneFragment extends BaseFragment {
 
 		@Override
 		public Void doInBackground(Void... arg0) {
-			for (Ringtone ringtone : chosenSongList) {
-				DBHelper.insertDBSong(db, ringtone);
+			SelectRingtoneFragment fragment = (SelectRingtoneFragment) fragmentWeakReference.get();
+			if (fragment == null) {
+				return null;
+			}
+
+			for (Ringtone ringtone : fragment.chosenRingtoneList) {
+				DBHelper.insertDBRingtone(fragment.db, ringtone);
 			}
 			return null;
 		}
 
 		public void onPostExecute(Void un) {
+			SelectRingtoneFragment fragment = (SelectRingtoneFragment) fragmentWeakReference.get();
+			if (fragment == null) {
+				return;
+			}
+
+			Activity activity = fragment.getActivity();
+			assert activity != null;
+
 			dialog.dismiss();
-			Toast.makeText(mContext, R.string.done,
-					Toast.LENGTH_SHORT).show();
-			mContext.finish();
+			Toast.makeText(activity, R.string.done, Toast.LENGTH_SHORT).show();
+			activity.finish();
 		}
 	}
 
-	private class LoadTask extends AsyncTask<Void, Void, Void> {
+	private static class LoadTask extends AsyncTask<Void, Void, Void> {
 		private MaterialDialog dialog;
+		private WeakReference<Fragment> fragmentWeakReference;
+
+		private LoadTask(Fragment fragment) {
+			fragmentWeakReference = new WeakReference<>(fragment);
+		}
 
 		public void onPreExecute() {
 			super.onPreExecute();
-			dialog = new MaterialDialog.Builder(mContext)
+
+			SelectRingtoneFragment fragment = (SelectRingtoneFragment) fragmentWeakReference.get();
+			if (fragment == null) {
+				return;
+			}
+
+			Activity activity = fragment.getActivity();
+			assert activity != null;
+
+			fragment.allRingtoneList.clear();
+			fragment.shownRingtoneList.clear();
+
+			dialog = new MaterialDialog.Builder(activity)
 					.content(R.string.wait)
 					.progress(true, 0)
 					.cancelable(false)
 					.show();
-			allSongList.clear();
-			showList.clear();
 		}
 
 		@Override
 		public Void doInBackground(Void... arg0) {
-			allSongList = new ArrayList<>(C.getDeviceSongList(mContext));
+			SelectRingtoneFragment fragment = (SelectRingtoneFragment) fragmentWeakReference.get();
+			if (fragment == null) {
+				return null;
+			}
+
+			Activity activity = fragment.getActivity();
+			assert activity != null;
+
+			ArrayList<Ringtone> allSongList = new ArrayList<>(C.getDeviceRingtoneList(activity));
+			fragment.allRingtoneList = new ArrayList<>(allSongList);
+			fragment.shownRingtoneList = new ArrayList<>(allSongList);
 			return null;
 		}
 
 		public void onPostExecute(Void un) {
-			showList = new ArrayList<>(allSongList);
+			SelectRingtoneFragment fragment = (SelectRingtoneFragment) fragmentWeakReference.get();
+			if (fragment == null) {
+				return;
+			}
 
-			RingtoneSelectAdapter.ItemClickListener mClickListener = new RingtoneSelectAdapter.ItemClickListener() {
-				@Override
-				public void onItemDetailClick(Ringtone ringtone) {
-					openDialogPlayingPreview(ringtone.getPath());
-				}
-			};
-
-			RingtoneSelectAdapter.ItemCheckListener mCheckListener = new RingtoneSelectAdapter.ItemCheckListener() {
-				@Override
-				public void onItemDetailCheck(Ringtone ringtone, boolean isChecked) {
-					if (isChecked) {
-						ringtoneSelectAdapter.addRingtone(ringtone);
-					} else {
-						ringtoneSelectAdapter.removeRingtone(ringtone);
-					}
-				}
-			};
-
-			ringtoneSelectAdapter = new RingtoneSelectAdapter(showList, mClickListener, mCheckListener);
-			recyclerView.setAdapter(ringtoneSelectAdapter);
+			fragment.ringtoneSelectAdapter.refreshData(fragment.shownRingtoneList);
 			dialog.dismiss();
 		}
 	}
@@ -175,7 +240,7 @@ public class SelectRingtoneFragment extends BaseFragment {
 	private void filterList() {
 		alFilter.clear();
 		hsFilter.clear();
-		for (Ringtone ringtone : allSongList) {
+		for (Ringtone ringtone : allRingtoneList) {
 			int posStart = 1;
 			int posEnd;
 			while (true) {
@@ -204,14 +269,13 @@ public class SelectRingtoneFragment extends BaseFragment {
 		alFilter.addAll(alFilterTemp);
 	}
 
-
 	@OnClick(R.id.saveBtn)
 	public void onClickSaveList() {
 		HashMap<String, Ringtone> ringtoneHashMap = ringtoneSelectAdapter.getSelectedRingtoneMap();
 		for (Map.Entry<String, Ringtone> ringtone : ringtoneHashMap.entrySet()) {
-			chosenSongList.add(ringtone.getValue());
+			chosenRingtoneList.add(ringtone.getValue());
 		}
-		new SaveTask().execute();
+		new SaveTask(this).execute();
 	}
 
 	@OnClick(R.id.filter_button)
@@ -224,14 +288,13 @@ public class SelectRingtoneFragment extends BaseFragment {
 					@Override
 					public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
 						chosenPath = text.toString();
-						Log.i("chosenPath", chosenPath);
-						showList.clear();
-						for (Ringtone ringtone : allSongList) {
+						shownRingtoneList.clear();
+						for (Ringtone ringtone : allRingtoneList) {
 							if (ringtone.getPath().contains(chosenPath)) {
-								showList.add(ringtone);
+								shownRingtoneList.add(ringtone);
 							}
 						}
-						ringtoneSelectAdapter.notifyDataSetChanged();
+						ringtoneSelectAdapter.refreshData(shownRingtoneList);
 						return true;
 					}
 				})
@@ -239,10 +302,10 @@ public class SelectRingtoneFragment extends BaseFragment {
 		dialog.show();
 	}
 
-	private void openDialogPlayingPreview(String string) {
+	private void openDialogPlayingPreview(Ringtone ringtone) {
 		try {
 			mediaPlayer = MediaPlayer.create(mContext,
-					Uri.parse("content://media/external/audio/media/" + DBHelper.getIDByPath(mContext, string)));
+					Uri.parse("content://media/external/audio/media/" + DBHelper.getIDByPath(mContext, ringtone.getPath())));
 			mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 				@Override
 				public void onCompletion(MediaPlayer arg0) {
@@ -252,7 +315,9 @@ public class SelectRingtoneFragment extends BaseFragment {
 			mediaPlayer.setLooping(true);
 			mediaPlayer.start();
 			MaterialDialog.Builder dialog = new MaterialDialog.Builder(mContext)
-					.content(R.string.playing_sound)
+					.title(R.string.playing_sound)
+					.content(getString(R.string.item_message) + ringtone.getName()
+							+ "\n\n" + getString(R.string.item_message2) + ringtone.getPath())
 					.dismissListener(new DialogInterface.OnDismissListener() {
 						@Override
 						public void onDismiss(DialogInterface dialog) {
@@ -274,6 +339,16 @@ public class SelectRingtoneFragment extends BaseFragment {
 			mediaPlayer.release();
 			mediaPlayer = null;
 			isPlaying = false;
+		}
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		if (requestCode == PERMISSION_REQUEST_CODE) {
+			if (!hasAllPermissionsGranted(grantResults)) {
+				C.openErrorPermissionDialog(mContext);
+			}
 		}
 	}
 }

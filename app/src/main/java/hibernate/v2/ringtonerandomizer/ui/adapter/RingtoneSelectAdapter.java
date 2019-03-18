@@ -1,6 +1,7 @@
 package hibernate.v2.ringtonerandomizer.ui.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,7 @@ public class RingtoneSelectAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 		void onItemDetailCheck(Ringtone ringtone, boolean isChecked);
 	}
 
-	public RingtoneSelectAdapter(List<Ringtone> mDataList,
+	public RingtoneSelectAdapter(@NonNull List<Ringtone> mDataList,
 	                             ItemClickListener mClickListener,
 	                             ItemCheckListener mCheckListener) {
 		this.mDataList = mDataList;
@@ -44,8 +45,9 @@ public class RingtoneSelectAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 		this.mCheckListener = mCheckListener;
 	}
 
+	@NonNull
 	@Override
-	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+	public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		Context context = parent.getContext();
 
 		View itemView = LayoutInflater.from(context).inflate(R.layout.list_item_select, parent, false);
@@ -53,7 +55,7 @@ public class RingtoneSelectAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 	}
 
 	@Override
-	public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position) {
+	public void onBindViewHolder(@NonNull RecyclerView.ViewHolder rawHolder, int position) {
 		Ringtone item = mDataList.get(position);
 		ItemViewHolder holder = (ItemViewHolder) rawHolder;
 
@@ -79,7 +81,13 @@ public class RingtoneSelectAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
 	@Override
 	public int getItemCount() {
-		return mDataList == null ? 0 : mDataList.size();
+		return mDataList.size();
+	}
+
+	public void refreshData(@NonNull List<Ringtone> mDataList) {
+		this.mDataList.clear();
+		this.mDataList.addAll(mDataList);
+		this.notifyDataSetChanged();
 	}
 
 	public HashMap<String, Ringtone> getSelectedRingtoneMap() {

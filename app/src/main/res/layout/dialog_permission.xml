@@ -17,19 +17,18 @@
         android:orientation="vertical"
         tools:ignore="UselessParent">
 
-        <android.support.v7.widget.AppCompatImageView
+        <ImageView
             android:id="@+id/iconIv"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_test_ad_remover"/>
+            android:src="@drawable/ic_icon_android"/>
 
         <android.support.v7.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:gravity="center_horizontal"
-            android:text="@string/iab_complete_message"
+            android:text="@string/dialog_permission_denied_message"
             android:textSize="20sp"/>
     </LinearLayout>
-
 </LinearLayout>

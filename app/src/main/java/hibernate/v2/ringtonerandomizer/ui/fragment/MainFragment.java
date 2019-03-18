@@ -1,13 +1,13 @@
 package hibernate.v2.ringtonerandomizer.ui.fragment;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -26,22 +27,27 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hibernate.v2.ringtonerandomizer.C;
 import hibernate.v2.ringtonerandomizer.R;
+import hibernate.v2.ringtonerandomizer.helper.DBHelper;
 import hibernate.v2.ringtonerandomizer.model.Ringtone;
-import hibernate.v2.ringtonerandomizer.ui.activity.MainActivity;
 import hibernate.v2.ringtonerandomizer.ui.activity.SelectRingtoneActivity;
 import hibernate.v2.ringtonerandomizer.ui.adapter.RingtoneSelectedAdapter;
-import hibernate.v2.ringtonerandomizer.ui.custom.TelephonyInfo;
-import hibernate.v2.ringtonerandomizer.utils.DBHelper;
 
 public class MainFragment extends BaseFragment {
+
+	protected final String[] PERMISSION_NAME = {
+			Manifest.permission.READ_EXTERNAL_STORAGE,
+			Manifest.permission.READ_PHONE_STATE
+	};
 
 	@BindView(R.id.rvlist)
 	RecyclerView recyclerView;
 	@BindView(R.id.currentText)
 	TextView currentText;
 
-	private ArrayList<Ringtone> ringtoneList = new ArrayList<>();
+	private ArrayList<Ringtone> currentRingtoneList = new ArrayList<>();
+
 	private DBHelper dbhelper;
+
 	private SQLiteDatabase db;
 	private RingtoneSelectedAdapter ringtoneSelectedAdapter;
 
@@ -56,59 +62,48 @@ public class MainFragment extends BaseFragment {
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+	public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
 	                         Bundle savedInstanceState) {
-		// Inflate the layout for this fragment
 		View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 		ButterKnife.bind(this, rootView);
 		return rootView;
 	}
 
 	@Override
-	public void onViewCreated(View view, Bundle savedInstanceState) {
+	public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-
-		recyclerView.setLayoutManager(new LinearLayoutManager(mContext,
-				LinearLayoutManager.VERTICAL, false)
-		);
 		openDatabase();
-		getCurrent();
 
-		RingtoneSelectedAdapter.ItemClickListener mClickListener = new RingtoneSelectedAdapter.ItemClickListener() {
-			@Override
-			public void onItemDetailClick(Ringtone ringtone) {
-				openDialogItem(ringtone.getPath());
-			}
-		};
+		recyclerView.setLayoutManager(new LinearLayoutManager(
+				mContext, LinearLayoutManager.VERTICAL, false));
 
-		ringtoneSelectedAdapter = new RingtoneSelectedAdapter(ringtoneList, mClickListener);
+		ringtoneSelectedAdapter = new RingtoneSelectedAdapter(
+				currentRingtoneList,
+				this::openDialogItem
+		);
 		recyclerView.setAdapter(ringtoneSelectedAdapter);
 
-		Bundle bundle = getArguments();
-		if (bundle != null) {
-			if (bundle.getBoolean("shortcut_action", false)) {
-				onClickRandom();
-			}
-		}
-
-		SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(mContext);
-		TelephonyInfo telephonyInfo = TelephonyInfo.getInstance(mContext);
-		if (telephonyInfo.isDualSIM() && telephonyInfo.isSIM2Ready() && setting.getBoolean("pref_dual_warning", true)) {
-			Snackbar snackbar = Snackbar.make(currentText, R.string.dual_sim_warning, Snackbar.LENGTH_LONG);
-			snackbar.setAction(R.string.ui_more, new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					((MainActivity) getActivity()).openDialogTutor();
-				}
-			});
-			C.initSnackbar(snackbar).show();
+		if (!isPermissionsGranted(PERMISSION_NAME)) {
+			requestPermissions(PERMISSION_NAME, PERMISSION_REQUEST_CODE);
 		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		new GetAllSavedSongTask().execute();
+
+		if (isPermissionsGranted(PERMISSION_NAME)) {
+			getCurrent();
+
+			Bundle bundle = getArguments();
+			if (bundle != null) {
+				if (bundle.getBoolean("shortcut_action", false)) {
+					onClickRandom();
+				}
+			}
+
+			new GetAllSavedSongTask(this).execute();
+		}
 	}
 
 	@Override
@@ -127,7 +122,7 @@ public class MainFragment extends BaseFragment {
 		dbhelper.close();
 	}
 
-	@OnClick(R.id.random_img)
+	@OnClick(R.id.randomIv)
 	public void onClickRandom() {
 		Toast.makeText(mContext,
 				DBHelper.changeRingtone(db, mContext, null),
@@ -135,7 +130,7 @@ public class MainFragment extends BaseFragment {
 		getCurrent();
 	}
 
-	@OnClick(R.id.add_img)
+	@OnClick(R.id.addIv)
 	public void onClickAddRingtone() {
 		startActivity(new Intent().setClass(mContext, SelectRingtoneActivity.class));
 	}
@@ -144,32 +139,61 @@ public class MainFragment extends BaseFragment {
 		currentText.setText(C.getCurrentRingtoneName(mContext));
 	}
 
-	private class GetAllSavedSongTask extends AsyncTask<Void, Void, Void> {
+	private static class GetAllSavedSongTask extends AsyncTask<Void, Void, Void> {
 		private MaterialDialog dialog;
+		private WeakReference<Fragment> fragmentWeakReference;
+
+		private GetAllSavedSongTask(Fragment fragment) {
+			fragmentWeakReference = new WeakReference<>(fragment);
+		}
 
 		public void onPreExecute() {
 			super.onPreExecute();
-			dialog = new MaterialDialog.Builder(mContext)
+			MainFragment fragment = (MainFragment) fragmentWeakReference.get();
+			if (fragment == null) {
+				return;
+			}
+
+			Activity activity = fragment.getActivity();
+			assert activity != null;
+
+			dialog = new MaterialDialog.Builder(activity)
 					.content(R.string.wait)
 					.progress(true, 0)
 					.cancelable(false)
 					.show();
-			ringtoneList.clear();
+			fragment.currentRingtoneList.clear();
 		}
 
 		@Override
 		public Void doInBackground(Void... arg0) {
-			ringtoneList.addAll(DBHelper.getDBSongList(db, mContext));
+			MainFragment fragment = (MainFragment) fragmentWeakReference.get();
+			if (fragment == null) {
+				return null;
+			}
+
+			Activity activity = fragment.getActivity();
+			assert activity != null;
+
+			fragment.currentRingtoneList.addAll(DBHelper.getDBRingtoneList(fragment.db, activity));
 			return null;
 		}
 
 		public void onPostExecute(Void un) {
-			ringtoneSelectedAdapter.notifyDataSetChanged();
+			MainFragment fragment = (MainFragment) fragmentWeakReference.get();
+			if (fragment == null) {
+				return;
+			}
+
+			Activity activity = fragment.getActivity();
+			assert activity != null;
+
+			fragment.ringtoneSelectedAdapter.notifyDataSetChanged();
 			dialog.dismiss();
 		}
 	}
 
-	@OnClick(R.id.clear_img)
+	@OnClick(R.id.clearIv)
 	public void openDialogClearData() {
 		MaterialDialog.Builder dialog = new MaterialDialog.Builder(mContext)
 				.title(R.string.clear_title)
@@ -178,39 +202,47 @@ public class MainFragment extends BaseFragment {
 				.onPositive(new MaterialDialog.SingleButtonCallback() {
 					@Override
 					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-						DBHelper.clearDBSongList(db);
-						new GetAllSavedSongTask().execute();
+						DBHelper.clearDBRingtoneList(db);
+						new GetAllSavedSongTask(MainFragment.this).execute();
 					}
 				})
 				.negativeText(R.string.clear_navbtn);
 		dialog.show();
 	}
 
-	public void openDialogItem(final String path) {
-		Ringtone bean = DBHelper.getDBSong(db, path);
-		if (bean != null) {
-			MaterialDialog.Builder dialog = new MaterialDialog.Builder(mContext)
-					.title(R.string.item_title)
-					.content(getString(R.string.item_message) + bean.getName()
-							+ "\n\n" + getString(R.string.item_message2) + bean.getPath())
-					.positiveText(R.string.item_posbtn)
-					.onPositive(new MaterialDialog.SingleButtonCallback() {
-						@Override
-						public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-							DBHelper.changeRingtone(db, mContext, path);
-							getCurrent();
-						}
-					})
-					.neutralText(R.string.item_netbtn)
-					.onNeutral(new MaterialDialog.SingleButtonCallback() {
-						@Override
-						public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-							DBHelper.deleteDBSong(db, path);
-							new GetAllSavedSongTask().execute();
-						}
-					})
-					.negativeText(R.string.item_navbtn);
-			dialog.show();
+	public void openDialogItem(Ringtone ringtone) {
+		MaterialDialog.Builder dialog = new MaterialDialog.Builder(mContext)
+				.title(R.string.item_title)
+				.content(getString(R.string.item_message) + ringtone.getName()
+						+ "\n\n" + getString(R.string.item_message2) + ringtone.getPath())
+				.positiveText(R.string.item_posbtn)
+				.onPositive(new MaterialDialog.SingleButtonCallback() {
+					@Override
+					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+						DBHelper.changeRingtone(db, mContext, ringtone.getPath());
+						getCurrent();
+					}
+				})
+				.neutralText(R.string.item_netbtn)
+				.onNeutral(new MaterialDialog.SingleButtonCallback() {
+					@Override
+					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+						DBHelper.deleteDBRingtone(db, ringtone.getPath());
+						new GetAllSavedSongTask(MainFragment.this).execute();
+					}
+				})
+				.negativeText(R.string.item_navbtn);
+		dialog.show();
+
+	}
+
+	@Override
+	public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+		super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+		if (requestCode == PERMISSION_REQUEST_CODE) {
+			if (!hasAllPermissionsGranted(grantResults)) {
+				C.openErrorPermissionDialog(mContext);
+			}
 		}
 	}
 }

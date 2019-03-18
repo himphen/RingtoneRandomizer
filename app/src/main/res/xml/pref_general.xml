@@ -27,17 +27,15 @@
         android:summaryOn="@string/pref_des_changed_notificationOn"
         android:title="@string/pref_title_changed_notification"/>
 
-    <CheckBoxPreference
+    <Preference
         android:defaultValue="true"
         android:key="pref_dual_warning"
-        android:summaryOff="@string/pref_des_dualOff"
-        android:summaryOn="@string/pref_des_dualOn"
+        android:summary="@string/dual_sim_warning"
         android:title="@string/pref_title_dual_warning"/>
 
     <PreferenceCategory android:title="@string/pref_category_more">
         <Preference
             android:key="pref_report"
-            android:summary="@string/report_des"
             android:title="@string/report"/>
         <Preference
             android:key="pref_more_app"

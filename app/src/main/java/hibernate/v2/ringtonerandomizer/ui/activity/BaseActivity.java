@@ -7,6 +7,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.google.android.gms.ads.MobileAds;
+
+import hibernate.v2.ringtonerandomizer.BuildConfig;
 import hibernate.v2.ringtonerandomizer.C;
 
 
@@ -15,6 +18,8 @@ import hibernate.v2.ringtonerandomizer.C;
  */
 @SuppressLint("Registered")
 public class BaseActivity extends AppCompatActivity {
+
+	protected static final int DELAY_AD_LAYOUT = 0;
 
 	protected Activity mContext;
 

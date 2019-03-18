@@ -1,14 +1,15 @@
 package hibernate.v2.ringtonerandomizer;
 
+import android.app.Application;
 import android.content.Context;
-import android.support.multidex.MultiDex;
-import android.support.multidex.MultiDexApplication;
+
+import com.blankj.utilcode.util.Utils;
 
 /**
  * Created by himphen on 24/5/16.
  */
 
-public class App extends MultiDexApplication {
+public class App extends Application {
 
 	@Override
 	public void onCreate() {
@@ -18,7 +19,7 @@ public class App extends MultiDexApplication {
 	@Override
 	protected void attachBaseContext(Context base) {
 		super.attachBaseContext(base);
-		MultiDex.install(this);
+		Utils.init(this);
 	}
 
 }

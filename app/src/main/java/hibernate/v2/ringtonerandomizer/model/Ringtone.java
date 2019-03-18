@@ -38,4 +38,13 @@ public class Ringtone {
 		this.position = position;
 	}
 
+	@Override
+	public String toString() {
+		return "Ringtone{" +
+				"musicId='" + musicId + '\'' +
+				", name='" + name + '\'' +
+				", path='" + path + '\'' +
+				", position='" + position + '\'' +
+				'}';
+	}
 }

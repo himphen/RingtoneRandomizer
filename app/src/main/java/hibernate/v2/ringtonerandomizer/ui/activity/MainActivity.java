@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -19,6 +20,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.anjlab.android.iab.v3.TransactionDetails;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,6 +63,8 @@ public class MainActivity extends BaseActivity {
 		ButterKnife.bind(this);
 		setSupportActionBar(toolbar);
 
+		MobileAds.initialize(this, BuildConfig.ADMOB_APP_ID);
+
 		ActionBar ab = initActionBar(getSupportActionBar(), R.string.app_name);
 		ab.setDisplayHomeAsUpEnabled(false);
 		ab.setHomeButtonEnabled(false);
@@ -70,7 +74,7 @@ public class MainActivity extends BaseActivity {
 		billingProcessor = new BillingProcessor(mContext, BuildConfig.GOOGLE_IAP_KEY,
 				new BillingProcessor.IBillingHandler() {
 					@Override
-					public void onProductPurchased(String productId, TransactionDetails details) {
+					public void onProductPurchased(@NonNull String productId, TransactionDetails details) {
 						if (productId.equals(C.IAP_PID)) {
 							settingDefault.edit().putBoolean(C.PREF_IAP, true).apply();
 							MaterialDialog.Builder dialog = new MaterialDialog.Builder(mContext)
@@ -99,10 +103,7 @@ public class MainActivity extends BaseActivity {
 
 		adView = C.initAdView(mContext, adLayout);
 
-		boolean isShortcutUpdate = false;
-		if (getIntent() != null) {
-			isShortcutUpdate = getIntent().getBooleanExtra("shortcut_action_change", false);
-		}
+		boolean isShortcutUpdate = getIntent().getBooleanExtra("shortcut_action_change", false);
 
 		Fragment fragment = MainFragment.getInstance(isShortcutUpdate);
 		FragmentManager fragmentManager = getSupportFragmentManager();
@@ -147,11 +148,9 @@ public class MainActivity extends BaseActivity {
 	private void share() {
 		Intent intent = new Intent();
 		intent.setAction(Intent.ACTION_SEND);
-		intent.putExtra(Intent.EXTRA_TEXT,
-				getResources().getString(R.string.share_message));
+		intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.share_message));
 		intent.setType("text/plain");
-		startActivity(Intent.createChooser(intent,
-				getResources().getString(R.string.share_button)));
+		startActivity(Intent.createChooser(intent, getString(R.string.share_button)));
 	}
 
 	public void openDialogTutor() {

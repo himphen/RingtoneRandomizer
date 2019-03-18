@@ -6,6 +6,11 @@
     <string name="ui_share">分享</string>
     <string name="ui_error">錯誤</string>
     <string name="ui_na">無法剖析</string>
+    <string name="ui_not_support">不支援</string>
+    <string name="ui_not_support_android_version">只支援 Android %1$s+</string>
+    <string name="dialog_feature_na_message">你的 Android 設備沒有這項功能或正由其他程式使用中。</string>
+    <string name="dialog_permission_denied_posbtn">設定 »</string>
+    <string name="dialog_permission_denied_message">請給予應用程式相關權限，這樣才能測試及提供相關資訊。</string>
 
     <string name="pref_category_more">更多資訊</string>
     <string name="pref_category_general">一般</string>
@@ -82,5 +87,22 @@
     <string name="shortcut_action_change">更改鈴聲</string>
     <string name="dual_sim_warning">未能支援部份雙卡電話。</string>
     <string name="ui_more">了解更多</string>
+
+    <string name="title_activity_settings">設定</string>
+
+    <string name="pref_header_general">一般</string>
+    <string name="pref_title_changed_notification">鈴聲變更通知</string>
+    <string name="pref_des_changed_notificationOn">來電時會顯示鈴聲變更成功通知</string>
+    <string name="pref_des_changed_notificationOff">來電時不會顯示鈴聲變更成功通知</string>
+
+    <string name="pref_title_enable">啟用隨機更改鈴聲</string>
+    <string name="pref_des_enableOn">來電時會隨機更改已選擇的鈴聲</string>
+    <string name="pref_des_enableOff">來電時不會更改任何鈴聲</string>
+
+    <string name="pref_title_dual_warning">雙卡提醒</string>
+
+    <string name="pref_language">Language／語言</string>
+    <string name="pref_language_sum">請重新啟動程式</string>
+    <string name="app_not_found">找不到應用程式。</string>
 
 </resources>

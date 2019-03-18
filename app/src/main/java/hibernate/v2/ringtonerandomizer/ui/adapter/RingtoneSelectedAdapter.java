@@ -1,6 +1,7 @@
 package hibernate.v2.ringtonerandomizer.ui.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,8 +34,9 @@ public class RingtoneSelectedAdapter extends RecyclerView.Adapter<RecyclerView.V
 		this.mClickListener = mClickListener;
 	}
 
+	@NonNull
 	@Override
-	public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+	public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 		Context context = parent.getContext();
 
 		View itemView = LayoutInflater.from(context).inflate(R.layout.list_item_selected, parent, false);
@@ -42,7 +44,7 @@ public class RingtoneSelectedAdapter extends RecyclerView.Adapter<RecyclerView.V
 	}
 
 	@Override
-	public void onBindViewHolder(RecyclerView.ViewHolder rawHolder, int position) {
+	public void onBindViewHolder(@NonNull RecyclerView.ViewHolder rawHolder, int position) {
 		Ringtone item = mDataList.get(position);
 		ItemViewHolder holder = (ItemViewHolder) rawHolder;
 
@@ -60,7 +62,7 @@ public class RingtoneSelectedAdapter extends RecyclerView.Adapter<RecyclerView.V
 
 	@Override
 	public int getItemCount() {
-		return mDataList == null ? 0 : mDataList.size();
+		return mDataList.size();
 	}
 
 	public static class ItemViewHolder extends RecyclerView.ViewHolder {
@@ -72,7 +74,7 @@ public class RingtoneSelectedAdapter extends RecyclerView.Adapter<RecyclerView.V
 		@BindView(R.id.filepathTv)
 		TextView filepathTv;
 
-		public ItemViewHolder(View itemView) {
+		ItemViewHolder(View itemView) {
 			super(itemView);
 			ButterKnife.bind(this, itemView);
 		}
