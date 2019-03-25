@@ -67,7 +67,7 @@ public class UtilHelper {
 					adRequest.addTestDevice(id);
 				}
 
-//				adView.loadAd(adRequest.build());
+				adView.loadAd(adRequest.build());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

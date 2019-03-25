@@ -1,17 +1,20 @@
 package hibernate.v2.ringtonerandomizer.model;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+
 public class Ringtone {
-	private String musicId;
+	private String uriId;
 	private String name;
 	private String path;
-	private String position;
+	private Boolean isChecked = false;
 
-	public String getMusicId() {
-		return musicId;
+	public String getUriId() {
+		return uriId;
 	}
 
-	public void setMusicId(String string) {
-		this.musicId = string;
+	public void setUriId(String string) {
+		this.uriId = string;
 	}
 
 	public String getName() {
@@ -22,6 +25,7 @@ public class Ringtone {
 		this.name = name;
 	}
 
+	@Nullable
 	public String getPath() {
 		return path;
 	}
@@ -30,21 +34,23 @@ public class Ringtone {
 		this.path = path;
 	}
 
-	public String getPosition() {
-		return position;
+	public Boolean getChecked() {
+		return isChecked;
 	}
 
-	public void setPosition(String position) {
-		this.position = position;
+	public void setChecked(Boolean checked) {
+		isChecked = checked;
 	}
 
+	@NonNull
 	@Override
 	public String toString() {
 		return "Ringtone{" +
-				"musicId='" + musicId + '\'' +
+				"uriId='" + uriId + '\'' +
 				", name='" + name + '\'' +
 				", path='" + path + '\'' +
-				", position='" + position + '\'' +
+				", isChecked=" + isChecked +
 				'}';
 	}
+
 }

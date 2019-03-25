@@ -2,10 +2,14 @@ package hibernate.v2.ringtonerandomizer.ui.fragment;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -83,8 +87,25 @@ public class MainFragment extends BaseFragment {
 		);
 		recyclerView.setAdapter(ringtoneSelectedAdapter);
 
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			NotificationManager notificationManager = mContext.getSystemService(NotificationManager.class);
+			assert notificationManager != null;
+
+			if (notificationManager.getNotificationChannel("Changed Notification") == null) {
+				NotificationChannel channel = new NotificationChannel("Changed Notification",
+						mContext.getString(R.string.pref_title_changed_notification),
+						NotificationManager.IMPORTANCE_LOW);
+				channel.setDescription(mContext.getString(R.string.pref_des_changed_notificationOn));
+				notificationManager.createNotificationChannel(channel);
+			}
+		}
+
 		if (!isPermissionsGranted(PERMISSION_NAME)) {
 			requestPermissions(PERMISSION_NAME, PERMISSION_REQUEST_CODE);
+		} else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			if (!Settings.System.canWrite(mContext)) {
+				C.openErrorSystemPermissionDialog(mContext);
+			}
 		}
 	}
 
@@ -93,6 +114,12 @@ public class MainFragment extends BaseFragment {
 		super.onResume();
 
 		if (isPermissionsGranted(PERMISSION_NAME)) {
+			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+				if (!Settings.System.canWrite(mContext)) {
+					C.openErrorSystemPermissionDialog(mContext);
+					return;
+				}
+			}
 			getCurrent();
 
 			Bundle bundle = getArguments();
@@ -102,7 +129,7 @@ public class MainFragment extends BaseFragment {
 				}
 			}
 
-			new GetAllSavedSongTask(this).execute();
+			new GetSavedRingtoneTask(this).execute();
 		}
 	}
 
@@ -124,9 +151,25 @@ public class MainFragment extends BaseFragment {
 
 	@OnClick(R.id.randomIv)
 	public void onClickRandom() {
-		Toast.makeText(mContext,
-				DBHelper.changeRingtone(db, mContext, null),
-				Toast.LENGTH_SHORT).show();
+		String message;
+		int result = DBHelper.changeRingtone(db, mContext, null);
+		switch (result) {
+			case DBHelper.CHANGE_RINGTONE_RESULT_SUCCESS:
+				message = getString(R.string.changed_ringtone);
+				break;
+			case DBHelper.CHANGE_RINGTONE_RESULT_COUNT_ZERO:
+				message = getString(R.string.notyet);
+				break;
+			case DBHelper.CHANGE_RINGTONE_RESULT_COUNT_ONE:
+				message = getString(R.string.changed_ringtone_one);
+				break;
+			case DBHelper.CHANGE_RINGTONE_RESULT_PERMISSION:
+			default:
+				message = getString(R.string.change_ringtone_result_permission);
+				break;
+		}
+
+		Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
 		getCurrent();
 	}
 
@@ -139,11 +182,11 @@ public class MainFragment extends BaseFragment {
 		currentText.setText(C.getCurrentRingtoneName(mContext));
 	}
 
-	private static class GetAllSavedSongTask extends AsyncTask<Void, Void, Void> {
+	private static class GetSavedRingtoneTask extends AsyncTask<Void, Void, Void> {
 		private MaterialDialog dialog;
 		private WeakReference<Fragment> fragmentWeakReference;
 
-		private GetAllSavedSongTask(Fragment fragment) {
+		private GetSavedRingtoneTask(Fragment fragment) {
 			fragmentWeakReference = new WeakReference<>(fragment);
 		}
 
@@ -203,7 +246,7 @@ public class MainFragment extends BaseFragment {
 					@Override
 					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
 						DBHelper.clearDBRingtoneList(db);
-						new GetAllSavedSongTask(MainFragment.this).execute();
+						new GetSavedRingtoneTask(MainFragment.this).execute();
 					}
 				})
 				.negativeText(R.string.clear_navbtn);
@@ -211,15 +254,23 @@ public class MainFragment extends BaseFragment {
 	}
 
 	public void openDialogItem(Ringtone ringtone) {
+		String message;
+		if (ringtone.getPath() != null) {
+			message = getString(R.string.item_message) + ringtone.getName()
+					+ "\n\n" + getString(R.string.item_message2) + ringtone.getPath();
+		} else {
+			message = getString(R.string.item_message) + ringtone.getName()
+					+ "\n\n" + getString(R.string.item_message2) + "Internal Storage";
+		}
+
 		MaterialDialog.Builder dialog = new MaterialDialog.Builder(mContext)
 				.title(R.string.item_title)
-				.content(getString(R.string.item_message) + ringtone.getName()
-						+ "\n\n" + getString(R.string.item_message2) + ringtone.getPath())
+				.content(message)
 				.positiveText(R.string.item_posbtn)
 				.onPositive(new MaterialDialog.SingleButtonCallback() {
 					@Override
 					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-						DBHelper.changeRingtone(db, mContext, ringtone.getPath());
+						DBHelper.changeRingtone(db, mContext, ringtone);
 						getCurrent();
 					}
 				})
@@ -227,13 +278,12 @@ public class MainFragment extends BaseFragment {
 				.onNeutral(new MaterialDialog.SingleButtonCallback() {
 					@Override
 					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-						DBHelper.deleteDBRingtone(db, ringtone.getPath());
-						new GetAllSavedSongTask(MainFragment.this).execute();
+						DBHelper.deleteDBRingtone(db, ringtone.getUriId());
+						new GetSavedRingtoneTask(MainFragment.this).execute();
 					}
 				})
 				.negativeText(R.string.item_navbtn);
 		dialog.show();
-
 	}
 
 	@Override
@@ -242,6 +292,16 @@ public class MainFragment extends BaseFragment {
 		if (requestCode == PERMISSION_REQUEST_CODE) {
 			if (!hasAllPermissionsGranted(grantResults)) {
 				C.openErrorPermissionDialog(mContext);
+			}
+		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+			if (requestCode == 500 && !Settings.System.canWrite(mContext)) {
+				mContext.finish();
 			}
 		}
 	}

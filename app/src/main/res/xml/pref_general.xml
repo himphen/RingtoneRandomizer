@@ -20,11 +20,17 @@
         android:summaryOff="@string/pref_des_enableOff"
         android:summaryOn="@string/pref_des_enableOn"
         android:title="@string/pref_title_enable"/>
+
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="pref_changed_notification"
         android:summaryOff="@string/pref_des_changed_notificationOff"
         android:summaryOn="@string/pref_des_changed_notificationOn"
+        android:title="@string/pref_title_changed_notification"/>
+
+    <Preference
+        android:defaultValue="true"
+        android:key="pref_changed_notification_android_o"
         android:title="@string/pref_title_changed_notification"/>
 
     <Preference

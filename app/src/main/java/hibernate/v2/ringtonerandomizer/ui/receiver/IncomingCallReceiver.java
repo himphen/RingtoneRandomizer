@@ -1,20 +1,20 @@
 package hibernate.v2.ringtonerandomizer.ui.receiver;
 
 import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.telephony.TelephonyManager;
 
 import hibernate.v2.ringtonerandomizer.C;
 import hibernate.v2.ringtonerandomizer.R;
 import hibernate.v2.ringtonerandomizer.helper.DBHelper;
-import hibernate.v2.ringtonerandomizer.ui.activity.MainActivity;
 
 public class IncomingCallReceiver extends BroadcastReceiver {
 
@@ -23,16 +23,34 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 	private SQLiteDatabase db;
 
 	@Override
-	public void onReceive(Context context, Intent intent) {
+	public void onReceive(Context mContext, Intent intent) {
 		C.debug("IncomingCallReceiver onReceive");
-		mContext = context;
-		SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(context);
+		this.mContext = mContext;
+		SharedPreferences setting = PreferenceManager.getDefaultSharedPreferences(mContext);
 		if (setting.getBoolean("pref_enable", true)) {
 			String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
 			if (TelephonyManager.EXTRA_STATE_RINGING.equals(state)) {
 				openDatabase();
-				String message = DBHelper.changeRingtone(db, context, null);
-				if (setting.getBoolean("pref_changed_notification", false)) {
+
+				String message;
+				int result = DBHelper.changeRingtone(db, mContext, null);
+				switch (result) {
+					case DBHelper.CHANGE_RINGTONE_RESULT_SUCCESS:
+						message = mContext.getString(R.string.changed_ringtone);
+						break;
+					case DBHelper.CHANGE_RINGTONE_RESULT_COUNT_ZERO:
+						message = mContext.getString(R.string.notyet);
+						break;
+					case DBHelper.CHANGE_RINGTONE_RESULT_COUNT_ONE:
+						message = mContext.getString(R.string.changed_ringtone_one);
+						break;
+					case DBHelper.CHANGE_RINGTONE_RESULT_PERMISSION:
+					default:
+						message = mContext.getString(R.string.change_ringtone_result_permission);
+						break;
+				}
+
+				if (setting.getBoolean("pref_changed_notification", true) || Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 					showNotification(message);
 				}
 				closeDatabase();
@@ -51,21 +69,13 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 	}
 
 	private void showNotification(String message) {
-		NotificationManager mgrNotification = (NotificationManager) mContext
-				.getSystemService(Context.NOTIFICATION_SERVICE);
-		if (mgrNotification != null) {
-			PendingIntent pIntent = PendingIntent.getActivity(mContext, 0,
-					new Intent(mContext, MainActivity.class),
-					PendingIntent.FLAG_ONE_SHOT);
-			Notification.Builder builder = new Notification.Builder(mContext);
+		Notification notification = new NotificationCompat.Builder(mContext, "Changed Notification")
+				.setSmallIcon(R.drawable.shuffle)
+				.setContentTitle(mContext.getString(R.string.pref_title_changed_notification))
+				.setContentText(message)
+				.setPriority(NotificationCompat.PRIORITY_LOW).build();
 
-			builder.setContentTitle(mContext.getString(R.string.app_name))
-					.setContentText(message)
-					.setSmallIcon(R.drawable.shuffle)
-					.setContentIntent(pIntent);
-			Notification notification = builder.build();
-			notification.flags = Notification.FLAG_AUTO_CANCEL;
-			mgrNotification.notify(1, notification);
-		}
+		NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
+		notificationManager.notify(3, notification);
 	}
 }

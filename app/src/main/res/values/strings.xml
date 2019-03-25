@@ -65,6 +65,7 @@
     <!--  -->
     <string name="ringtone_main">Selected Ringtones</string>
     <string name="notyet">You have not yet added any ringtone into the list.</string>
+    <string name="change_ringtone_result_permission">You have not yet granted permission.</string>
     <string name="share_message">Download "Ringtone Randomizer" to ring up your phone with different ringtones. That\'s sound smart!!/n/n
         https://play.google.com/store/apps/details?id=hibernate.v2.ringtonerandomizer</string>
     <string name="share_button">Share App to…</string>
@@ -91,8 +92,8 @@
 
     <string name="pref_header_general">General</string>
     <string name="pref_title_changed_notification">Notification</string>
-    <string name="pref_des_changed_notificationOn">Show the popup message while incoming call</string>
-    <string name="pref_des_changed_notificationOff">No popup message shown while incoming call</string>
+    <string name="pref_des_changed_notificationOn">Show the notification message while incoming call</string>
+    <string name="pref_des_changed_notificationOff">No notification message shown while incoming call</string>
 
     <string name="pref_title_enable">Enable</string>
     <string name="pref_des_enableOn">Change the ringtone while incoming call.</string>
@@ -103,6 +104,10 @@
     <string name="pref_language">Language</string>
     <string name="pref_language_sum">Restart this app after changing the language.</string>
     <string name="app_not_found">No application found.</string>
+
+    <string name="write_settings_permission_dialog_title">Allow to modifying system settings</string>
+    <string name="write_settings_permission_dialog_content">Please click next to allow this app to modify system ringtone settings.</string>
+    <string name="write_settings_permission_dialog_pos_btn">Next</string>
 
     <string-array name="pref_language_list_titles" translatable="false">
         <item>System default</item>

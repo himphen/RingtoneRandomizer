@@ -1,10 +1,13 @@
 package hibernate.v2.ringtonerandomizer.ui.fragment;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.preference.Preference;
 import android.view.View;
@@ -16,6 +19,8 @@ import hibernate.v2.ringtonerandomizer.C;
 import hibernate.v2.ringtonerandomizer.R;
 
 public class SettingsFragment extends BasePreferenceFragment {
+
+	private Preference prefChangedNotificationAndroidO;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -29,6 +34,8 @@ public class SettingsFragment extends BasePreferenceFragment {
 		Preference prefReport = findPreference("pref_report");
 		Preference prefMoreApp = findPreference("pref_more_app");
 		Preference prefVersion = findPreference("pref_version");
+		Preference prefChangedNotification = findPreference("pref_changed_notification");
+		prefChangedNotificationAndroidO = findPreference("pref_changed_notification_android_o");
 
 		prefVersion.setSummary(AppUtils.getAppVersionName());
 
@@ -46,6 +53,43 @@ public class SettingsFragment extends BasePreferenceFragment {
 				return false;
 			}
 		});
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			prefChangedNotification.setVisible(false);
+			prefChangedNotificationAndroidO.setVisible(true);
+			prefChangedNotificationAndroidO.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+				@Override
+				public boolean onPreferenceClick(Preference preference) {
+					Intent intent = new Intent();
+					intent.setAction(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+					intent.putExtra(Settings.EXTRA_APP_PACKAGE, AppUtils.getAppPackageName());
+					intent.putExtra(Settings.EXTRA_CHANNEL_ID, "Changed Notification");
+					startActivity(intent);
+					return false;
+				}
+			});
+		} else {
+			prefChangedNotification.setVisible(true);
+			prefChangedNotificationAndroidO.setVisible(false);
+		}
+	}
+
+	public void onResume() {
+		super.onResume();
+
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+			NotificationManager notificationManager = mContext.getSystemService(NotificationManager.class);
+			assert notificationManager != null;
+			NotificationChannel notificationChannel = notificationManager.getNotificationChannel("Changed Notification");
+
+			if (notificationChannel != null) {
+				if (notificationChannel.getImportance() != NotificationManager.IMPORTANCE_NONE) {
+					prefChangedNotificationAndroidO.setSummary(getString(R.string.pref_des_changed_notificationOn));
+				} else {
+					prefChangedNotificationAndroidO.setSummary(getString(R.string.pref_des_changed_notificationOff));
+				}
+			}
+		}
 	}
 
 	private void openDialogMoreApp() {
@@ -61,8 +105,8 @@ public class SettingsFragment extends BasePreferenceFragment {
 	private void openDialogReport() {
 		Intent intent = new Intent(Intent.ACTION_SEND);
 
-		String text = "Android Version: " + android.os.Build.VERSION.RELEASE + "\n";
-		text += "SDK Level: " + String.valueOf(android.os.Build.VERSION.SDK_INT) + "\n";
+		String text = "Android Version: " + Build.VERSION.RELEASE + "\n";
+		text += "SDK Level: " + String.valueOf(Build.VERSION.SDK_INT) + "\n";
 		text += "Version: " + AppUtils.getAppVersionName() + "\n";
 		text += "Brand: " + Build.BRAND + "\n";
 		text += "Model: " + Build.MODEL + "\n\n\n";

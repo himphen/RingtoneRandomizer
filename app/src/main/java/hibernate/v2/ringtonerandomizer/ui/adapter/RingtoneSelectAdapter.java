@@ -7,11 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -26,23 +25,15 @@ public class RingtoneSelectAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
 	private List<Ringtone> mDataList;
 	private ItemClickListener mClickListener;
-	private ItemCheckListener mCheckListener;
-	private HashMap<String, Ringtone> selectedRingtoneMap = new HashMap<>();
 
 	public interface ItemClickListener {
 		void onItemDetailClick(Ringtone ringtone);
 	}
 
-	public interface ItemCheckListener {
-		void onItemDetailCheck(Ringtone ringtone, boolean isChecked);
-	}
-
 	public RingtoneSelectAdapter(@NonNull List<Ringtone> mDataList,
-	                             ItemClickListener mClickListener,
-	                             ItemCheckListener mCheckListener) {
+	                             ItemClickListener mClickListener) {
 		this.mDataList = mDataList;
 		this.mClickListener = mClickListener;
-		this.mCheckListener = mCheckListener;
 	}
 
 	@NonNull
@@ -56,13 +47,17 @@ public class RingtoneSelectAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
 	@Override
 	public void onBindViewHolder(@NonNull RecyclerView.ViewHolder rawHolder, int position) {
-		Ringtone item = mDataList.get(position);
+		Ringtone ringtone = mDataList.get(position);
 		ItemViewHolder holder = (ItemViewHolder) rawHolder;
 
-		holder.filenameTv.setText(item.getName());
-		holder.filepathTv.setText(item.getPath());
+		holder.filenameTv.setText(ringtone.getName());
+		if (ringtone.getPath() == null) {
+			holder.filepathTv.setText("Internal Storage");
+		} else {
+			holder.filepathTv.setText(ringtone.getPath());
+		}
 
-		holder.rootView.setTag(item);
+		holder.rootView.setTag(ringtone);
 		holder.rootView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -70,11 +65,15 @@ public class RingtoneSelectAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 			}
 		});
 
-		holder.checkbox.setTag(item);
-		holder.checkbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+		holder.checkbox.setChecked(ringtone.getChecked());
+		holder.checkbox.setTag(ringtone);
+		holder.checkbox.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onCheckedChanged(CompoundButton v, boolean isChecked) {
-				mCheckListener.onItemDetailCheck((Ringtone) v.getTag(), isChecked);
+			public void onClick(View v) {
+				Ringtone ringtone = (Ringtone) v.getTag();
+				boolean b = !ringtone.getChecked();
+				ringtone.setChecked(b);
+				((CheckBox) v).setChecked(b);
 			}
 		});
 	}
@@ -90,16 +89,15 @@ public class RingtoneSelectAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 		this.notifyDataSetChanged();
 	}
 
-	public HashMap<String, Ringtone> getSelectedRingtoneMap() {
-		return selectedRingtoneMap;
-	}
+	public ArrayList<Ringtone> getCheckedRingtoneList() {
+		ArrayList<Ringtone> checkedRingtoneList = new ArrayList<>();
+		for (Ringtone ringtone : mDataList) {
+			if (ringtone.getChecked()) {
+				checkedRingtoneList.add(ringtone);
+			}
+		}
 
-	public void addRingtone(Ringtone ringtone) {
-		selectedRingtoneMap.put(ringtone.getPath(), ringtone);
-	}
-
-	public void removeRingtone(Ringtone ringtone) {
-		selectedRingtoneMap.remove(ringtone.getPath());
+		return checkedRingtoneList;
 	}
 
 	static class ItemViewHolder extends RecyclerView.ViewHolder {

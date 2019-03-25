@@ -22,9 +22,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,7 +42,6 @@ public class SelectRingtoneFragment extends BaseFragment {
 	@BindView(R.id.rvlist)
 	RecyclerView recyclerView;
 
-	private ArrayList<Ringtone> chosenRingtoneList = new ArrayList<>();
 	private ArrayList<Ringtone> allRingtoneList = new ArrayList<>();
 	private ArrayList<Ringtone> shownRingtoneList = new ArrayList<>();
 	private HashSet<String> hsFilter = new HashSet<>();
@@ -77,17 +74,7 @@ public class SelectRingtoneFragment extends BaseFragment {
 
 		ringtoneSelectAdapter = new RingtoneSelectAdapter(
 				shownRingtoneList,
-				this::openDialogPlayingPreview,
-				new RingtoneSelectAdapter.ItemCheckListener() {
-					@Override
-					public void onItemDetailCheck(Ringtone ringtone, boolean isChecked) {
-						if (isChecked) {
-							ringtoneSelectAdapter.addRingtone(ringtone);
-						} else {
-							ringtoneSelectAdapter.removeRingtone(ringtone);
-						}
-					}
-				}
+				this::openDialogPlayingPreview
 		);
 		recyclerView.setAdapter(ringtoneSelectAdapter);
 
@@ -160,7 +147,7 @@ public class SelectRingtoneFragment extends BaseFragment {
 				return null;
 			}
 
-			for (Ringtone ringtone : fragment.chosenRingtoneList) {
+			for (Ringtone ringtone : fragment.ringtoneSelectAdapter.getCheckedRingtoneList()) {
 				DBHelper.insertDBRingtone(fragment.db, ringtone);
 			}
 			return null;
@@ -220,9 +207,9 @@ public class SelectRingtoneFragment extends BaseFragment {
 			Activity activity = fragment.getActivity();
 			assert activity != null;
 
-			ArrayList<Ringtone> allSongList = new ArrayList<>(C.getDeviceRingtoneList(activity));
-			fragment.allRingtoneList = new ArrayList<>(allSongList);
-			fragment.shownRingtoneList = new ArrayList<>(allSongList);
+			ArrayList<Ringtone> ringtones = new ArrayList<>(C.getDeviceRingtoneList(activity));
+			fragment.allRingtoneList = new ArrayList<>(ringtones);
+			fragment.shownRingtoneList = new ArrayList<>(ringtones);
 			return null;
 		}
 
@@ -240,10 +227,14 @@ public class SelectRingtoneFragment extends BaseFragment {
 	private void filterList() {
 		alFilter.clear();
 		hsFilter.clear();
+		hsFilter.add("Internal Storage");
 		for (Ringtone ringtone : allRingtoneList) {
 			int posStart = 1;
 			int posEnd;
 			while (true) {
+				if (ringtone.getPath() == null) {
+					break;
+				}
 				posEnd = ringtone.getPath().indexOf("/", posStart);
 				if (posStart == posEnd || posEnd == -1)
 					break;
@@ -271,10 +262,6 @@ public class SelectRingtoneFragment extends BaseFragment {
 
 	@OnClick(R.id.saveBtn)
 	public void onClickSaveList() {
-		HashMap<String, Ringtone> ringtoneHashMap = ringtoneSelectAdapter.getSelectedRingtoneMap();
-		for (Map.Entry<String, Ringtone> ringtone : ringtoneHashMap.entrySet()) {
-			chosenRingtoneList.add(ringtone.getValue());
-		}
 		new SaveTask(this).execute();
 	}
 
@@ -290,8 +277,14 @@ public class SelectRingtoneFragment extends BaseFragment {
 						chosenPath = text.toString();
 						shownRingtoneList.clear();
 						for (Ringtone ringtone : allRingtoneList) {
-							if (ringtone.getPath().contains(chosenPath)) {
-								shownRingtoneList.add(ringtone);
+							if (ringtone.getPath() == null) {
+								if (chosenPath.equals("Internal")) {
+									shownRingtoneList.add(ringtone);
+								}
+							} else {
+								if (ringtone.getPath().contains(chosenPath)) {
+									shownRingtoneList.add(ringtone);
+								}
 							}
 						}
 						ringtoneSelectAdapter.refreshData(shownRingtoneList);
@@ -304,26 +297,29 @@ public class SelectRingtoneFragment extends BaseFragment {
 
 	private void openDialogPlayingPreview(Ringtone ringtone) {
 		try {
-			mediaPlayer = MediaPlayer.create(mContext,
-					Uri.parse("content://media/external/audio/media/" + DBHelper.getIDByPath(mContext, ringtone.getPath())));
-			mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-				@Override
-				public void onCompletion(MediaPlayer arg0) {
-					stopPlaying();
-				}
-			});
+			mediaPlayer = MediaPlayer.create(mContext, Uri.parse(ringtone.getUriId()));
 			mediaPlayer.setLooping(true);
 			mediaPlayer.start();
+
+			String message;
+			if (ringtone.getPath() != null) {
+				message = getString(R.string.item_message) + ringtone.getName()
+						+ "\n\n" + getString(R.string.item_message2) + ringtone.getPath();
+			} else {
+				message = getString(R.string.item_message) + ringtone.getName()
+						+ "\n\n" + getString(R.string.item_message2) + "Internal Storage";
+			}
+
 			MaterialDialog.Builder dialog = new MaterialDialog.Builder(mContext)
 					.title(R.string.playing_sound)
-					.content(getString(R.string.item_message) + ringtone.getName()
-							+ "\n\n" + getString(R.string.item_message2) + ringtone.getPath())
+					.content(message)
 					.dismissListener(new DialogInterface.OnDismissListener() {
 						@Override
 						public void onDismiss(DialogInterface dialog) {
 							stopPlaying();
 						}
 					})
+					.cancelable(false)
 					.negativeText(R.string.item_navbtn);
 			dialog.show();
 		} catch (Exception e) {

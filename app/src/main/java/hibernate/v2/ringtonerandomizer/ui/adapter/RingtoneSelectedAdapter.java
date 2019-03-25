@@ -45,13 +45,17 @@ public class RingtoneSelectedAdapter extends RecyclerView.Adapter<RecyclerView.V
 
 	@Override
 	public void onBindViewHolder(@NonNull RecyclerView.ViewHolder rawHolder, int position) {
-		Ringtone item = mDataList.get(position);
+		Ringtone ringtone = mDataList.get(position);
 		ItemViewHolder holder = (ItemViewHolder) rawHolder;
 
-		holder.filenameTv.setText(item.getName());
-		holder.filepathTv.setText(item.getPath());
+		holder.filenameTv.setText(ringtone.getName());
+		if (ringtone.getPath() == null) {
+			holder.filepathTv.setText("Internal Storage");
+		} else {
+			holder.filepathTv.setText(ringtone.getPath());
+		}
 
-		holder.rootView.setTag(item);
+		holder.rootView.setTag(ringtone);
 		holder.rootView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {

@@ -68,6 +68,7 @@
     <string name="item_done">變更成功</string>
     <string name="ringtone_main">已選電話鈴聲</string>
     <string name="notyet">你還沒有加入任何鈴聲至清單中……</string>
+    <string name="change_ringtone_result_permission">你還沒有允許需要的權限。</string>
     <string name="share_message">用來用去都是同一個鈴聲？快下載「隨機鈴聲工具」，每次來電都會自動替換鈴聲，令你的手機更智能化。/n/n
         https://play.google.com/store/apps/details?id=hibernate.v2.ringtonerandomizer</string>
     <string name="share_button">分享此APP給…</string>
@@ -104,5 +105,9 @@
     <string name="pref_language">Language／語言</string>
     <string name="pref_language_sum">請重新啟動程式</string>
     <string name="app_not_found">找不到應用程式。</string>
+
+    <string name="write_settings_permission_dialog_title">請求程式權限</string>
+    <string name="write_settings_permission_dialog_content">程式需要「更改系統設定」的權限才能更改鈴聲設定，請按「下一步」授權本程式。</string>
+    <string name="write_settings_permission_dialog_pos_btn">下一步</string>
 
 </resources>
