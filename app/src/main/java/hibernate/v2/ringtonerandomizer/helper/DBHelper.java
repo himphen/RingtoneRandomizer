@@ -167,9 +167,13 @@ public class DBHelper extends SQLiteOpenHelper {
 		Uri currentUri = RingtoneManager.getActualDefaultRingtoneUri(
 				context, RingtoneManager.TYPE_RINGTONE);
 
-		String selection = DB_COL_URI_ID
-				+ " != "
-				+ DatabaseUtils.sqlEscapeString(currentUri.toString());
+		String selection = null;
+
+		if (currentUri != null) {
+			selection = DB_COL_URI_ID
+					+ " != "
+					+ DatabaseUtils.sqlEscapeString(currentUri.toString());
+		}
 
 		C.debug("selection: " + selection);
 		try {

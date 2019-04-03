@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.github.javiersantos.appupdater.AppUpdater;
+import com.github.javiersantos.appupdater.enums.Display;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -106,6 +108,11 @@ public class MainFragment extends BaseFragment {
 			if (!Settings.System.canWrite(mContext)) {
 				C.openErrorSystemPermissionDialog(mContext);
 			}
+		} else {
+			AppUpdater appUpdater = new AppUpdater(mContext)
+					.showEvery(4)
+					.setDisplay(Display.NOTIFICATION);
+			appUpdater.start();
 		}
 	}
 
