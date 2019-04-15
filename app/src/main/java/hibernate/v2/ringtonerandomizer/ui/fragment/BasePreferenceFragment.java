@@ -2,7 +2,7 @@ package hibernate.v2.ringtonerandomizer.ui.fragment;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v7.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceFragmentCompat;
 
 public class BasePreferenceFragment extends PreferenceFragmentCompat {
 

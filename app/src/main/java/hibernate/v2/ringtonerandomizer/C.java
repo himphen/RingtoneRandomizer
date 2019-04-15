@@ -11,8 +11,8 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import androidx.annotation.NonNull;
+import com.google.android.material.snackbar.Snackbar;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -181,8 +181,8 @@ public class C extends UtilHelper {
 	public static Snackbar initSnackbar(Snackbar snackbar) {
 		View sbView = snackbar.getView();
 		sbView.setBackgroundResource(R.color.primary_dark);
-		((TextView) sbView.findViewById(android.support.design.R.id.snackbar_text)).setTextColor(Color.WHITE);
-		((TextView) sbView.findViewById(android.support.design.R.id.snackbar_action)).setTextColor(Color.YELLOW);
+		((TextView) sbView.findViewById(com.google.android.material.R.id.snackbar_text)).setTextColor(Color.WHITE);
+		((TextView) sbView.findViewById(com.google.android.material.R.id.snackbar_text)).setTextColor(Color.YELLOW);
 		return snackbar;
 	}
 

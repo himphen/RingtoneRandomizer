@@ -8,8 +8,8 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Build;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import android.telephony.TelephonyManager;
 
 import hibernate.v2.ringtonerandomizer.C;
@@ -30,10 +30,10 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 		if (setting.getBoolean("pref_enable", true)) {
 			String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
 			if (TelephonyManager.EXTRA_STATE_RINGING.equals(state)) {
-				openDatabase();
+				dbhelper = new DBHelper(mContext);
 
 				String message;
-				int result = DBHelper.changeRingtone(db, mContext, null);
+				int result = dbhelper.changeRingtone(mContext, null);
 				switch (result) {
 					case DBHelper.CHANGE_RINGTONE_RESULT_SUCCESS:
 						message = mContext.getString(R.string.changed_ringtone);
@@ -53,19 +53,9 @@ public class IncomingCallReceiver extends BroadcastReceiver {
 				if (setting.getBoolean("pref_changed_notification", true) || Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 					showNotification(message);
 				}
-				closeDatabase();
+				dbhelper.close();
 			}
 		}
-	}
-
-	private void openDatabase() {
-		dbhelper = new DBHelper(mContext);
-		db = dbhelper.getWritableDatabase();
-	}
-
-	private void closeDatabase() {
-		db.close();
-		dbhelper.close();
 	}
 
 	private void showNotification(String message) {

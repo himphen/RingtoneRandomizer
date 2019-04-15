@@ -1,7 +1,7 @@
 package hibernate.v2.ringtonerandomizer.model;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class Ringtone {
 	private String uriId;

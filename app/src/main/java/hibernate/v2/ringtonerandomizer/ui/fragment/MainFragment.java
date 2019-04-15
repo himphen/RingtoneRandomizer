@@ -5,15 +5,14 @@ import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,8 +52,6 @@ public class MainFragment extends BaseFragment {
 	private ArrayList<Ringtone> currentRingtoneList = new ArrayList<>();
 
 	private DBHelper dbhelper;
-
-	private SQLiteDatabase db;
 	private RingtoneSelectedAdapter ringtoneSelectedAdapter;
 
 	public static MainFragment getInstance(boolean isShortcutUpdate) {
@@ -78,7 +75,7 @@ public class MainFragment extends BaseFragment {
 	@Override
 	public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		openDatabase();
+		dbhelper = new DBHelper(mContext);
 
 		recyclerView.setLayoutManager(new LinearLayoutManager(
 				mContext, LinearLayoutManager.VERTICAL, false));
@@ -143,23 +140,13 @@ public class MainFragment extends BaseFragment {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		closeDatabase();
-	}
-
-	private void openDatabase() {
-		dbhelper = new DBHelper(mContext);
-		db = dbhelper.getWritableDatabase();
-	}
-
-	private void closeDatabase() {
-		db.close();
 		dbhelper.close();
 	}
 
 	@OnClick(R.id.randomIv)
 	public void onClickRandom() {
 		String message;
-		int result = DBHelper.changeRingtone(db, mContext, null);
+		int result = dbhelper.changeRingtone(mContext, null);
 		switch (result) {
 			case DBHelper.CHANGE_RINGTONE_RESULT_SUCCESS:
 				message = getString(R.string.changed_ringtone);
@@ -225,7 +212,7 @@ public class MainFragment extends BaseFragment {
 			Activity activity = fragment.getActivity();
 			assert activity != null;
 
-			fragment.currentRingtoneList.addAll(DBHelper.getDBRingtoneList(fragment.db, activity));
+			fragment.currentRingtoneList.addAll(fragment.dbhelper.getDBRingtoneList(activity));
 			return null;
 		}
 
@@ -252,7 +239,7 @@ public class MainFragment extends BaseFragment {
 				.onPositive(new MaterialDialog.SingleButtonCallback() {
 					@Override
 					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-						DBHelper.clearDBRingtoneList(db);
+						dbhelper.clearDBRingtoneList();
 						new GetSavedRingtoneTask(MainFragment.this).execute();
 					}
 				})
@@ -277,7 +264,7 @@ public class MainFragment extends BaseFragment {
 				.onPositive(new MaterialDialog.SingleButtonCallback() {
 					@Override
 					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-						DBHelper.changeRingtone(db, mContext, ringtone);
+						dbhelper.changeRingtone(mContext, ringtone);
 						getCurrent();
 					}
 				})
@@ -285,7 +272,7 @@ public class MainFragment extends BaseFragment {
 				.onNeutral(new MaterialDialog.SingleButtonCallback() {
 					@Override
 					public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-						DBHelper.deleteDBRingtone(db, ringtone.getUriId());
+						dbhelper.deleteDBRingtone(ringtone.getUriId());
 						new GetSavedRingtoneTask(MainFragment.this).execute();
 					}
 				})
