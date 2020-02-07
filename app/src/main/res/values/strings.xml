@@ -5,6 +5,7 @@
     <string name="ui_error">Error</string>
     <string name="ui_na">Not Applicable</string>
     <string name="ui_caution">Caution</string>
+    <string name="ui_reset">Reset</string>
     <string name="ui_not_support">Not supported</string>
     <string name="ui_not_support_android_version">Only support Android %1$s+</string>
     <string name="dialog_feature_na_message">Your Android device does not have this feature, or this feature may be using by other apps.</string>
@@ -18,7 +19,7 @@
     <string name="report">Feedback</string>
     <string name="report_title">Ringtone Randomizer: Report and Feedback</string>
     <string name="report_subject">Here is my message: \n</string>
-    <string name="report_des"/>
+    <string name="report_des" />
     <string name="qanda">FAQ</string>
     <string name="qanda_message">Q. Why did not the app change ringtone while incoming call?\n\n
         A. Please read the follow notes: \n\n
@@ -42,7 +43,7 @@
     <string name="setting">Setting</string>
     <string name="action_iap">Ad Remove</string>
     <!--  -->
-    <string name="filter_title">Filter using the File Path</string>
+    <string name="filter_title">Filter File Path:</string>
     <string name="clear_title">Caution</string>
     <string name="clear_message">Are you sure to clear ALL selected ringtones?</string>
     <string name="clear_navbtn">No</string>
@@ -111,7 +112,7 @@
 
     <string-array name="pref_language_list_titles" translatable="false">
         <item>System default</item>
-        <item>中文(繁體)</item>
+        <item>中文（正體）</item>
         <item>English</item>
     </string-array>
     <string-array name="pref_language_list_values" translatable="false">

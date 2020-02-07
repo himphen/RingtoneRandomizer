@@ -5,6 +5,7 @@
     <string name="ui_cancel">取消</string>
     <string name="ui_share">分享</string>
     <string name="ui_error">錯誤</string>
+    <string name="ui_reset">重設</string>
     <string name="ui_na">無法剖析</string>
     <string name="ui_not_support">不支援</string>
     <string name="ui_not_support_android_version">只支援 Android %1$s+</string>
@@ -45,7 +46,7 @@
     <string name="changed_ringtone_one">你只有一個已選鈴聲，請在程式內選擇更多鈴聲。</string>
     <string name="setting">設定</string>
     <string name="action_iap">移除廣告</string>
-    <string name="filter_title">請使用音樂的資料夾路徑進行篩選</string>
+    <string name="filter_title">資料夾路徑篩選</string>
     <string name="clear_title">注意</string>
     <string name="clear_message">你是否確定要清除清單？</string>
     <string name="clear_navbtn">不清除</string>

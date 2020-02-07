@@ -1,42 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin">
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingTop="8dp"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingBottom="8dp">
+        android:paddingStart="@dimen/margin_screen"
+        android:paddingTop="@dimen/margin_m"
+        android:paddingEnd="@dimen/margin_screen"
+        android:paddingBottom="@dimen/margin_m">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/saveBtn"
             style="@style/ButtonText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
             android:layout_weight="2"
             android:text="@string/addto_button"
-            android:theme="@style/MainButton"/>
+            android:theme="@style/MainButton" />
+
+        <Space
+            android:layout_width="@dimen/margin_m"
+            android:layout_height="match_parent" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/filter_button"
+            android:id="@+id/filterBtn"
             style="@style/ButtonText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:text="@string/filter_button"
-            android:theme="@style/GrayButton"/>
+            android:theme="@style/GrayButton" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/margin_screen"
+        android:paddingEnd="@dimen/margin_screen"
+        android:paddingBottom="@dimen/margin_m">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/filter_title" />
+
+        <Space
+            android:layout_width="@dimen/margin_s"
+            android:layout_height="match_parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/currentPathTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="/storage/" />
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvlist"
+        android:id="@+id/rvList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 </LinearLayout>

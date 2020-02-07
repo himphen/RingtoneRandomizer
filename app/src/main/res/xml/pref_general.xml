@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:title="@string/setting">
 
     <PreferenceCategory android:title="@string/pref_category_general">
@@ -11,7 +11,7 @@
             android:entryValues="@array/pref_language_list_values"
             android:key="PREF_LANGUAGE"
             android:summary="@string/pref_language_sum"
-            android:title="@string/pref_language"/>
+            android:title="@string/pref_language" />
     </PreferenceCategory>
 
     <CheckBoxPreference
@@ -19,36 +19,38 @@
         android:key="pref_enable"
         android:summaryOff="@string/pref_des_enableOff"
         android:summaryOn="@string/pref_des_enableOn"
-        android:title="@string/pref_title_enable"/>
+        android:title="@string/pref_title_enable" />
 
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="pref_changed_notification"
         android:summaryOff="@string/pref_des_changed_notificationOff"
         android:summaryOn="@string/pref_des_changed_notificationOn"
-        android:title="@string/pref_title_changed_notification"/>
+        android:title="@string/pref_title_changed_notification"
+        app:isPreferenceVisible="true" />
 
     <Preference
         android:defaultValue="true"
         android:key="pref_changed_notification_android_o"
-        android:title="@string/pref_title_changed_notification"/>
+        android:title="@string/pref_title_changed_notification"
+        app:isPreferenceVisible="false" />
 
     <Preference
         android:defaultValue="true"
         android:key="pref_dual_warning"
         android:summary="@string/dual_sim_warning"
-        android:title="@string/pref_title_dual_warning"/>
+        android:title="@string/pref_title_dual_warning" />
 
     <PreferenceCategory android:title="@string/pref_category_more">
         <Preference
             android:key="pref_report"
-            android:title="@string/report"/>
+            android:title="@string/report" />
         <Preference
             android:key="pref_more_app"
-            android:title="@string/more_app"/>
+            android:title="@string/more_app" />
         <Preference
             android:key="pref_version"
-            android:title="@string/version"/>
+            android:title="@string/version" />
     </PreferenceCategory>
 
 </PreferenceScreen>
