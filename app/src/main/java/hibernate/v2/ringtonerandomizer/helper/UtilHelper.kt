@@ -1,5 +1,6 @@
 package hibernate.v2.ringtonerandomizer.helper
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
@@ -25,18 +26,20 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.afollestad.materialdialogs.customview.customView
 import com.blankj.utilcode.util.AppUtils
 import com.blankj.utilcode.util.SizeUtils
-import com.crashlytics.android.Crashlytics
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.orhanobut.logger.Logger
 import hibernate.v2.ringtonerandomizer.BuildConfig
-import hibernate.v2.ringtonerandomizer.Environment
 import hibernate.v2.ringtonerandomizer.R
 import hibernate.v2.ringtonerandomizer.model.Ringtone
 import java.math.BigDecimal
+import java.math.BigInteger
 import java.math.MathContext
 import java.math.RoundingMode
+import java.security.MessageDigest
 import java.util.ArrayList
 import java.util.Locale
 
@@ -54,40 +57,31 @@ object UtilHelper {
 
     const val DELAY_AD_LAYOUT = 100L
 
-    fun initAdView(context: Context?, adLayout: RelativeLayout, isPreserveSpace: Boolean = false): AdView? {
+    fun initAdView(
+        context: Context?,
+        adLayout: RelativeLayout,
+        isPreserveSpace: Boolean = false
+    ): AdView? {
+        if (context == null) return null
+
         if (isPreserveSpace) {
             adLayout.layoutParams.height = SizeUtils.dp2px(50f)
         }
         val defaultPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        var adView: AdView? = null
+
         try {
             if (!defaultPreferences.getBoolean(PREF_IAP, false)) {
-                adView = AdView(context)
-                adView.adUnitId = BuildConfig.ADMOB_KEY
+                val adView = AdView(context)
+                adView.adUnitId = BuildConfig.ADMOB_BANNER_ID
                 adView.adSize = AdSize.BANNER
                 adLayout.addView(adView)
-                val adRequest = AdRequest.Builder()
-                adRequest.addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
-                for (id in BuildConfig.ADMOB_DEVICE_ID) {
-                    adRequest.addTestDevice(id)
-                }
-                adView.loadAd(adRequest.build())
+                adView.loadAd(AdRequest.Builder().build())
+                return adView
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            logException(e)
         }
-        return adView
-    }
-
-    fun forceShowMenu(context: Context?) {
-        try {
-            val config = ViewConfiguration.get(context)
-            val menuKeyField = ViewConfiguration::class.java
-                    .getDeclaredField("sHasPermanentMenuKey")
-            menuKeyField.isAccessible = true
-            menuKeyField.setBoolean(config, false)
-        } catch (ignored: Exception) {
-        }
+        return null
     }
 
     fun round(value: Double, places: Int): Double {
@@ -129,16 +123,16 @@ object UtilHelper {
     }
 
     fun debug(message: String) {
-        if (Environment.CONFIG.isDebug) {
-            Log.d(DEBUG_TAG, message)
+        if (BuildConfig.DEBUG) {
+            Logger.d(message)
         }
     }
 
     fun logException(e: Exception) {
-        if (Environment.CONFIG.isDebug) {
+        if (BuildConfig.DEBUG) {
             e.printStackTrace()
         } else {
-            Crashlytics.logException(e)
+            FirebaseCrashlytics.getInstance().recordException(e)
         }
     }
 
@@ -316,5 +310,21 @@ object UtilHelper {
     fun notAppFound(context: Activity?) {
         Toast.makeText(context, R.string.app_not_found, Toast.LENGTH_LONG).show()
         context?.finish()
+    }
+
+    @SuppressLint("HardwareIds")
+    fun getAdMobDeviceID(context: Context): String {
+        val androidId =
+            Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+        return androidId.md5().toUpperCase(Locale.getDefault())
+    }
+}
+
+fun String.md5(): String {
+    return try {
+        val md = MessageDigest.getInstance("MD5")
+        BigInteger(1, md.digest(toByteArray())).toString(16).padStart(32, '0')
+    } catch (e: Exception) {
+        ""
     }
 }

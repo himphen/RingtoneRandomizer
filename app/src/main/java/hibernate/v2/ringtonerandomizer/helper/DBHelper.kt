@@ -11,7 +11,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.BaseColumns
 import android.provider.Settings
-import com.crashlytics.android.Crashlytics
+import hibernate.v2.ringtonerandomizer.helper.UtilHelper.logException
 import hibernate.v2.ringtonerandomizer.model.Ringtone
 import java.util.ArrayList
 
@@ -202,7 +202,7 @@ class DBHelper(val context: Context?) : SQLiteOpenHelper(context, DATABASE_NAME,
                         RingtoneManager.setActualDefaultRingtoneUri(context, RingtoneManager.TYPE_RINGTONE, pickedUri)
                         CHANGE_RINGTONE_RESULT_SUCCESS
                     } catch (e: Exception) {
-                        Crashlytics.logException(e)
+                        logException(e)
                         CHANGE_RINGTONE_RESULT_PERMISSION
                     }
                 }

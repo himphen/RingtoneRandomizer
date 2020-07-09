@@ -14,7 +14,6 @@ import com.afollestad.materialdialogs.customview.customView
 import com.anjlab.android.iab.v3.BillingProcessor
 import com.anjlab.android.iab.v3.BillingProcessor.IBillingHandler
 import com.anjlab.android.iab.v3.TransactionDetails
-import com.google.android.gms.ads.MobileAds
 import hibernate.v2.ringtonerandomizer.BuildConfig
 import hibernate.v2.ringtonerandomizer.R
 import hibernate.v2.ringtonerandomizer.helper.UtilHelper
@@ -40,8 +39,6 @@ class MainActivity : BaseFragmentActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
         supportActionBar?.setHomeButtonEnabled(false)
 
-        MobileAds.initialize(this, BuildConfig.ADMOB_APP_ID)
-        UtilHelper.forceShowMenu(this)
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this)
         billingProcessor = BillingProcessor(this, BuildConfig.GOOGLE_IAP_KEY,
                 object : IBillingHandler {
